@@ -1,0 +1,85 @@
+name: Publish
+
+# Brings the live site up to date with this repository, with ./publish.ps1: the theme when the newest package in
+# Azure Artifacts is not the one the site shows, and every post whose file differs from the post on the site.
+# What did not change is not sent, so the workflow can run as often as it likes.
+#
+# It runs for every change to main, once a day to pick up a new package of the theme, and by hand.
+#
+# Secrets of the repository (Settings > Secrets and variables > Actions):
+#
+#   GHOST_LIVE_ADMIN_API_KEY    the Admin API key of a custom integration of the live site
+#   GHOST_LIVE_STAFF_ACCESS_TOKEN  optional: a staff access token, to also send the settings of the theme.
+#                               It may do everything its owner may do. Without it those settings are left alone.
+#   AZURE_DEVOPS_EXT_PAT        a personal access token of Azure DevOps with the scope Packaging (Read)
+#   AZURE_DEVOPS_ORGANIZATION   the address of the organization, such as https://dev.azure.com/my-org
+#   AZURE_DEVOPS_PROJECT        the project of the feed
+#   AZURE_ARTIFACTS_FEED        the feed the pipeline of the theme publishes to
+#
+# Without the last four the theme is left as it is and only the posts are published.
+on:
+  push:
+    branches: [main]
+    paths:
+      - posts/**
+      - tags/**
+      - pages/**
+      - "*.ps1"
+      - "*.psd1"
+      - tools/**
+      - .semgrep/**
+      - .github/workflows/publish.yml
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Only show what would change
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+# One publish at a time, and never a half one.
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish to the live site
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      GHOST_LIVE_ADMIN_API_KEY: ${{ secrets.GHOST_LIVE_ADMIN_API_KEY }}
+      GHOST_LIVE_STAFF_ACCESS_TOKEN: ${{ secrets.GHOST_LIVE_STAFF_ACCESS_TOKEN }}
+      # The settings of the theme that are not in theme-settings.psd1. One that has no secret is left alone.
+      GHOST_THEME_SETTING_CONTENT_API_KEY: ${{ secrets.GHOST_THEME_SETTING_CONTENT_API_KEY }}
+      GHOST_THEME_SETTING_GOOGLE_ANALYTICS_ID: ${{ secrets.GHOST_THEME_SETTING_GOOGLE_ANALYTICS_ID }}
+      GHOST_THEME_SETTING_AZURE_BLOB_SAS_URI: ${{ secrets.GHOST_THEME_SETTING_AZURE_BLOB_SAS_URI }}
+      GHOST_THEME_SETTING_GITHUB_CLIENT_ID: ${{ secrets.GHOST_THEME_SETTING_GITHUB_CLIENT_ID }}
+      GHOST_THEME_SETTING_GITHUB_DEVICE_PROXY_URL: ${{ secrets.GHOST_THEME_SETTING_GITHUB_DEVICE_PROXY_URL }}
+      AZURE_DEVOPS_EXT_PAT: ${{ secrets.AZURE_DEVOPS_EXT_PAT }}
+      AZURE_DEVOPS_ORGANIZATION: ${{ secrets.AZURE_DEVOPS_ORGANIZATION }}
+      AZURE_DEVOPS_PROJECT: ${{ secrets.AZURE_DEVOPS_PROJECT }}
+      AZURE_ARTIFACTS_FEED: ${{ secrets.AZURE_ARTIFACTS_FEED }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@v7
+
+      # A key, a token or another secret in a file of the repository stops the run. The secrets above are in the
+      # environment of this step too, so their values are looked for as well.
+      - name: Look for secrets in the files
+        run: ./tools/Test-Secret.ps1
+
+      # publish.ps1 passes -WhatIf on to every command, so a dry run only reads from the live site.
+      - name: Show what would change
+        if: github.event_name == 'workflow_dispatch' && inputs.dry_run
+        run: ./publish.ps1 -WhatIf
+
+      - name: Publish the theme and the posts
+        if: github.event_name != 'workflow_dispatch' || !inputs.dry_run
+        run: ./publish.ps1 -Confirm:$false

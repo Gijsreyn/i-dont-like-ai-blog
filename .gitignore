@@ -1,0 +1,13 @@
+# The Ghost site on your own machine
+/.local-ghost/
+
+# Where the theme comes from and the keys of the live site, on your own machine
+site.local.psd1
+*.local.psd1
+*.local.ps1
+.env
+.env.*
+
+# Editors and operating systems
+.DS_Store
+Thumbs.db

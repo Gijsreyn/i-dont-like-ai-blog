@@ -1,0 +1,51 @@
+name: Check
+
+# Shows that every post of a pull request can be published: a Ghost site is installed on the runner, and the posts
+# are created on it the way they are on the live site. A front matter that Ghost does not take, or an image that
+# is not there, fails the run.
+#
+# The site is new and thrown away afterwards, and has the theme Ghost comes with: this workflow needs no secrets,
+# so it also runs for a pull request from a fork.
+on:
+  pull_request:
+    paths:
+      - posts/**
+      - "*.ps1"
+      - "*.psd1"
+      - tools/**
+      - .semgrep/**
+      - .github/workflows/check.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  posts:
+    name: Create the posts on a local Ghost site
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Check out
+        uses: actions/checkout@v7
+
+      # Ghost runs on the LTS versions of Node.js.
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      # Looks for secrets in the files first, with Semgrep. Then installs the Ghost module from the PowerShell
+      # Gallery, starts the site and creates the posts.
+      - name: Start a local Ghost site with the posts
+        run: ./preview.ps1
+
+      - name: Show the log of Ghost
+        if: failure()
+        run: Get-ChildItem -Path ./.local-ghost/content/logs -Filter *.log -ErrorAction Ignore | Get-Content -Tail 100
