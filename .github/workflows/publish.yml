@@ -43,7 +43,7 @@ on:
       dry_run:
         description: Only show what would change
         type: boolean
-        default: true
+        default: false
       base_ref:
         description: Also remove what was removed from this repository since this commit
         type: string
