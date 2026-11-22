@@ -1,8 +1,15 @@
 name: Publish
 
-# Brings the live site up to date with this repository, with ./publish.ps1: the theme when the newest package in
-# Azure Artifacts is not the one the site shows, and every post whose file differs from the post on the site.
-# What did not change is not sent, so the workflow can run as often as it likes.
+# Brings the live site up to date with this repository. What did not change is not sent, so the workflow can run
+# as often as it likes.
+#
+#   1. The newest package of the theme is downloaded from Azure Artifacts, where the pipeline of the theme
+#      publishes it.
+#   2. The action Gijsreyn/ghost-deploy-action uploads that theme when the live site shows another one. It then
+#      creates and updates the tags, the pages and the posts whose file differs from the site. After a push it
+#      also removes the ones whose file that push removed. What was made in Ghost Admin has no file here and is
+#      left alone.
+#   3. ./publish.ps1 -SettingsOnly sends the settings of the theme, when there is a staff access token.
 #
 # It runs for every change to main, once a day to pick up a new package of the theme, and by hand.
 #
@@ -16,7 +23,7 @@ name: Publish
 #   AZURE_DEVOPS_PROJECT        the project of the feed
 #   AZURE_ARTIFACTS_FEED        the feed the pipeline of the theme publishes to
 #
-# Without the last four the theme is left as it is and only the posts are published.
+# Without the last four the theme is left as it is and only the tags, the pages and the posts are published.
 on:
   push:
     branches: [main]
@@ -36,7 +43,11 @@ on:
       dry_run:
         description: Only show what would change
         type: boolean
-        default: false
+        default: true
+      base_ref:
+        description: Also remove what was removed from this repository since this commit
+        type: string
+        default: ""
 
 permissions:
   contents: read
@@ -45,6 +56,10 @@ permissions:
 concurrency:
   group: publish
   cancel-in-progress: false
+
+env:
+  # A dry run changes nothing on the live site. The summary of the run shows what would change.
+  DRY_RUN: ${{ github.event_name != 'workflow_dispatch' || inputs.dry_run }}
 
 jobs:
   publish:
@@ -75,11 +90,50 @@ jobs:
       - name: Look for secrets in the files
         run: ./tools/Test-Secret.ps1
 
-      # publish.ps1 passes -WhatIf on to every command, so a dry run only reads from the live site.
-      - name: Show what would change
-        if: github.event_name == 'workflow_dispatch' && inputs.dry_run
-        run: ./publish.ps1 -WhatIf
+      # The address of the live site and the name of the theme are in site.psd1, which the scripts read as well.
+      - name: Read site.psd1
+        id: site
+        run: |
+          $site = Import-PowerShellDataFile -Path ./site.psd1
+          $values = "url=$($site.LiveUrl)", "theme-name=$($site.ThemeName)"
+          Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value $values
 
-      - name: Publish the theme and the posts
-        if: github.event_name != 'workflow_dispatch' || !inputs.dry_run
-        run: ./publish.ps1 -Confirm:$false
+      # The custom theme from Azure Artifacts feed
+      - name: Download the theme from Azure Artifacts
+        id: theme
+        if: env.AZURE_DEVOPS_ORGANIZATION != '' && env.AZURE_ARTIFACTS_FEED != ''
+        env:
+          THEME_NAME: ${{ steps.site.outputs.theme-name }}
+        run: |
+          $download = @{
+              Organization = $env:AZURE_DEVOPS_ORGANIZATION
+              Project      = $env:AZURE_DEVOPS_PROJECT
+              Feed         = $env:AZURE_ARTIFACTS_FEED
+              Name         = $env:THEME_NAME
+              Path         = Join-Path -Path $env:RUNNER_TEMP -ChildPath 'theme'
+          }
+          $package = ./tools/Get-ThemePackage.ps1 @download
+          Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value "path=$($package.FullName)"
+
+      # The theme first, then the tags, the pages and the posts. With delete, a post, a page or a tag whose file a
+      # push removed is removed from the site as well. A run by hand has no push to compare with, so it removes
+      # only what was removed since the commit in base_ref. The daily run removes nothing.
+      - name: Deploy to Ghost
+        uses: Gijsreyn/ghost-deploy-action@v1
+        with:
+          api-url: ${{ steps.site.outputs.url }}
+          api-key: ${{ secrets.GHOST_LIVE_ADMIN_API_KEY }}
+          theme: ${{ steps.theme.outputs.path }}
+          theme-name: ${{ steps.site.outputs.theme-name }}
+          tags: tags
+          pages: pages
+          posts: posts
+          delete: true
+          base-ref: ${{ inputs.base_ref }}
+          dry-run: ${{ env.DRY_RUN }}
+
+      # The action does not send the settings of the theme. Ghost only lets an owner or an administrator change
+      # them, which takes the staff access token. They go last, when the theme they belong to is on the site.
+      - name: Send the settings of the theme
+        if: env.GHOST_LIVE_STAFF_ACCESS_TOKEN != ''
+        run: ./publish.ps1 -SettingsOnly -WhatIf:($env:DRY_RUN -eq 'true') -Confirm:$false

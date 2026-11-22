@@ -18,7 +18,9 @@
        the post on the site. A post is published when its front matter says status: published. An email is never
        sent.
 
-    The workflow Publish of this repository runs this for every change to main. You can run it yourself too.
+    The workflow Publish of this repository does the same for every change to main. It leaves the theme, the tags,
+    the pages and the posts to the action ghost-deploy-action, which uses the same commands, and runs this script
+    with -SettingsOnly for the settings of the theme. You can run the script yourself too.
 
     -WhatIf shows what would change, without changing anything: it only reads. -Local does the whole thing for
     real, but on the site on your own machine, which is how to rehearse a publish.
@@ -51,6 +53,12 @@
     ./publish.ps1 -SkipTheme
 
     Publishes the posts and leaves the theme of the live site as it is.
+
+.EXAMPLE
+    ./publish.ps1 -SettingsOnly -Confirm:$false
+
+    Sends the settings of the theme that differ and nothing else, without asking. The workflow Publish does this
+    after its action has brought the theme, the tags, the pages and the posts up to date.
 #>
 [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
 param(
@@ -62,6 +70,10 @@ param(
 
     # Leave the posts, the pages and the tags of the site as they are.
     [switch] $SkipPosts,
+
+    # Send the settings of the theme and nothing else. The theme itself, the tags, the pages and the posts are
+    # left as they are.
+    [switch] $SettingsOnly,
 
     # Publish to the site on this machine instead of the live site.
     [switch] $Local
@@ -79,6 +91,13 @@ $dryRun = [bool] $WhatIfPreference
 
 # Before -SkipTheme is set for a theme that is linked into the local site: its settings are still sent.
 $applySettings = -not $SkipTheme
+
+# The settings alone. Whoever asks for that has taken care of the rest, as the workflow Publish does.
+if ($SettingsOnly) {
+    $applySettings = $true
+    $SkipTheme = $true
+    $SkipPosts = $true
+}
 
 if ($Local) {
     $state = Join-Path -Path $site.LocalPath -ChildPath 'local-ghost.json'
@@ -124,6 +143,9 @@ else {
 
     # One question for the whole run. With -WhatIf nothing is asked, and the commands below say what they would do.
     $question = 'Publish the theme and the posts of this repository'
+    if ($SettingsOnly) {
+        $question = 'Send the settings of the theme of this repository'
+    }
     if (-not $dryRun -and -not $PSCmdlet.ShouldProcess($address, $question)) {
         return
     }

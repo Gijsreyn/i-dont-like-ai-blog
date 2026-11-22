@@ -22,9 +22,10 @@ git switch -c post/why-i-do-not-like-ai                     # 4. branch, commit,
    but on the site on this machine.
 4. **Pull request.** The workflow `Check` loads the posts into a Ghost site on the runner. It touches nothing
    else.
-5. **Go live.** Set `status: published` in the front matter and merge to `main`. The workflow `Publish` sends
-   the post to the live site. Merged as a draft, the post is created on the live site as a draft, which is a good
-   way to look at it there first: Ghost Admin has a preview link.
+5. **Go live.** Set `status: published` in the front matter and merge to `main`. The workflow `Publish` runs for
+   that merge as a dry run, and its summary shows what would change on the live site. Then start the workflow by
+   hand with `dry_run` cleared, which publishes. Merged as a draft, the post is created on the live site as a
+   draft, which is a good way to look at it there first: Ghost Admin has a preview link.
 6. **Change it later.** Edit the file and merge again. Only a file that differs from its post is sent.
 
 To publish from this machine instead of through the workflow:
@@ -38,11 +39,11 @@ To publish from this machine instead of through the workflow:
 ## Rules for an agent
 
 - **The live site is not yours to touch.** Ask before you run anything that connects to it, and that includes
-  a run that only reads: `./publish.ps1` and `./pull.ps1` without `-Local`, with or without `-WhatIf`, and
-  `./preview.ps1 -FromLive`. Everything else stays on this machine and needs no question: `./new-post.ps1`,
-  `./preview.ps1`, `./publish.ps1 -Local`, `./pull.ps1 -Local`.
+  a run that only reads: `./publish.ps1` and `./pull.ps1` without `-Local`, with or without `-WhatIf`,
+  `./preview.ps1 -FromLive`, and starting the workflow `Publish`. Everything else stays on this machine and needs
+  no question: `./new-post.ps1`, `./preview.ps1`, `./publish.ps1 -Local`, `./pull.ps1 -Local`.
 - **Do not set `status: published`** unless you are asked to. A post goes live because its author says so.
-- **Do not commit, push or merge** unless you are asked to. A merge to `main` publishes.
+- **Do not commit, push or merge** unless you are asked to. A merge to `main` starts the workflow `Publish`.
 - **Nothing private in a file that git tracks.** No key, no token, and not where the theme comes from: its
   repository, the Azure DevOps organization, the project and the feed. Those are in `site.local.psd1`, which git
   ignores, in a secret vault, or in the secrets of the repository. Do not print a key either.
@@ -109,8 +110,10 @@ Good to know:
   has. A picture that is no longer used stays on the site: Ghost cannot remove one.
 - **This repository decides.** A change that is made to a post in Ghost Admin is overwritten the next time its
   file changes. Fields that the front matter does not mention are left as they are on the site.
-- **Removing a folder does not remove the post.** Delete the post in Ghost Admin as well.
-- **Renaming a folder makes a new post**, because the slug changes. To change only the address, set `slug`.
+- **Removing a folder can remove the post.** The workflow `Publish` lists the post as "Would remove" and removes
+  it when it is told to, see [What a publish does](#what-a-publish-does). `./publish.ps1` never removes a post.
+- **Renaming a folder makes a new post**, because the slug changes. The old post is then one whose file was
+  removed. To rename a folder and keep its post, put the old slug in the front matter as `slug`.
 
 ## Tags
 
@@ -132,6 +135,10 @@ The text below the front matter is the description. The other keys are the field
 
 `./preview.ps1` and `./publish.ps1` create or update the tags from these files, before the posts, and only what
 differs. To change a tag, change its file. `description: ""` in the front matter clears the description.
+
+Think twice before you remove the file of a tag. When the workflow `Publish` removes that tag from the live
+site, every post loses it. That includes the posts that were written in Ghost Admin and are not in this
+repository.
 
 ## Pages
 
@@ -210,8 +217,8 @@ or the site on this machine does not have it and the next publish does not know 
 - **Posts are not pulled.** A post that was written in Ghost Admin, such as the lessons of a course, is not in
   this repository. `./preview.ps1 -FromLive` copies everything of the live site to the site on this machine.
 
-Nothing is ever deleted for you: a tag or a page without a file stays on the site, and a file without one
-stays here.
+`pull.ps1` deletes nothing: a tag or a page without a file stays on the site, and a file without one stays
+here.
 
 ## The site on this machine
 
@@ -235,17 +242,31 @@ posts. Without a theme the site shows the one Ghost comes with.
 
 ## What a publish does
 
-`./publish.ps1`, and the workflow `Publish` that runs it for every change to `main`, once a day, and by hand:
+`./publish.ps1` on this machine, and the workflow `Publish` for every change to `main`, once a day, and by hand:
 
 1. **The theme**, when the newest package of the theme is not the one the site shows. The theme has a repository
    and a pipeline of its own, which publishes it as a package to a feed in Azure Artifacts. The daily run is
-   there so that a new theme goes live without a new post.
-2. **The settings of the theme** that differ, when there is a staff access token. See below.
+   there so that a new theme is noticed without a new post.
+2. **The settings of the theme** that differ, when there is a staff access token. See above.
 3. **The tags** whose file differs from the tag on the site.
 4. **The pages** whose file differs from the page on the site.
 5. **The posts** whose file differs from the post on the site.
 
-The workflow can be started by hand with `dry_run`, which shows what would change and changes nothing.
+The workflow does not run `publish.ps1` for all of that. It downloads the package of the theme with
+`tools/Get-ThemePackage.ps1` and hands it to the action
+[ghost-deploy-action](https://github.com/Gijsreyn/ghost-deploy-action). The action does the theme, the tags, the
+pages and the posts, with the same commands of the module Ghost. `./publish.ps1 -SettingsOnly` then sends the
+settings of the theme, which go last there. The summary of a run lists what was created, updated and removed.
+
+Two things are different in the workflow:
+
+- **It is a dry run unless you say otherwise.** A push to `main` and the daily run change nothing. Their summary
+  shows what would change. To publish, start the workflow by hand and clear `dry_run`. `DRY_RUN` at the top of
+  `.github/workflows/publish.yml` decides this.
+- **It can remove.** The action compares a push with the commit before it, and lists a post, a page or a tag
+  whose file that push removed as "Would remove". A run by hand has no push to compare with. It removes only
+  when you give it that commit as `base_ref`, and the log of the dry run names the commit. A run removes ten at
+  most and fails when more files were removed. `publish.ps1` and `preview.ps1` never remove anything.
 
 ## Setup, once
 
@@ -309,6 +330,7 @@ after a year at most: the workflow then fails on the theme.
 | ----------------------- | -------------------------------------------------------------------- | ------ |
 | The posts               | This repository                                                      | Yes    |
 | The commands            | The module [Ghost](https://www.powershellgallery.com/packages/Ghost) | Yes    |
+| The publish in CI       | The action `Gijsreyn/ghost-deploy-action`, in the workflow `Publish` | Yes    |
 | Ghost itself            | npm, through Ghost-CLI                                               | Yes    |
 | The theme, to work on   | Its git repository, cloned with git as it is set up on this machine  | No     |
 | The theme, to publish   | The package its pipeline publishes to a feed in Azure Artifacts      | No     |
