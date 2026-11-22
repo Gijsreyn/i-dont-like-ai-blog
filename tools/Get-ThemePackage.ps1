@@ -61,12 +61,15 @@ if (-not $Path) {
 # Also in a dry run of publish.ps1: the download changes nothing on the site, and the dry run needs the package.
 New-Item -Path $Path -ItemType Directory -Force -WhatIf:$false | Out-Null
 
+# The version goes in one argument with its option. On Linux and macOS, PowerShell expands a wildcard in an
+# argument of a program to the files that match it, as a shell does there: a version of * by itself became every
+# file in the current folder. Nothing matches --version=*, so that one stays as it is.
 $arguments = @(
     'artifacts', 'universal', 'download'
     '--organization', $Organization
     '--feed', $Feed
     '--name', $Name
-    '--version', $Version
+    "--version=$Version"
     '--path', $Path
 )
 if ($Project) {

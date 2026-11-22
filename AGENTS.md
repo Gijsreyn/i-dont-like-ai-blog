@@ -171,18 +171,12 @@ services behind the site: `google_analytics_id`, `github_client_id` and `github_
 `./pull.ps1` divides the settings over the two files by that list.
 
 The workflow has no second file. It takes such a value from a secret of the repository, passed as an
-environment variable: `GHOST_THEME_SETTING_` followed by the key in capitals. That wins from both files.
-
-| Secret                                        | The setting it fills      |
-| --------------------------------------------- | ------------------------- |
-| `GHOST_THEME_SETTING_CONTENT_API_KEY`         | `content_api_key`         |
-| `GHOST_THEME_SETTING_GOOGLE_ANALYTICS_ID`     | `google_analytics_id`     |
-| `GHOST_THEME_SETTING_AZURE_BLOB_SAS_URI`      | `azure_blob_sas_uri`      |
-| `GHOST_THEME_SETTING_GITHUB_CLIENT_ID`        | `github_client_id`        |
-| `GHOST_THEME_SETTING_GITHUB_DEVICE_PROXY_URL` | `github_device_proxy_url` |
+environment variable: `GHOST_THEME_SETTING_` followed by the key in capitals. That wins from both files. The
+secrets are listed under [Setup, once](#setup-once).
 
 A setting without a secret is left as it is on the live site. For another private setting, add its key to
-`PrivateThemeSettings` and a line for its secret under `env` in `.github/workflows/publish.yml`.
+`PrivateThemeSettings`, a line for its secret under `env` in `.github/workflows/publish.yml`, and a row to that
+list.
 
 `./preview.ps1` and `./publish.ps1` send the settings that differ from the site and leave a setting that is in
 neither file as it is there. A key that the theme does not have, or a choice that is not one of its options, is
@@ -319,10 +313,41 @@ Actions**:
 | `AZURE_DEVOPS_PROJECT`      | The project of the feed                                                          |
 | `AZURE_ARTIFACTS_FEED`      | The feed that the pipeline of the theme publishes to                             |
 
-`GHOST_LIVE_STAFF_ACCESS_TOKEN` is optional: with it the workflow also sends the settings of the theme.
+Without the last four the workflow publishes the posts and leaves the theme alone. An organization-scoped feed
+needs no `AZURE_DEVOPS_PROJECT`. A personal access token ends after a year at most: the workflow then fails on
+the theme.
 
-Without the last four the workflow publishes the posts and leaves the theme alone. A personal access token ends
-after a year at most: the workflow then fails on the theme.
+`GHOST_LIVE_STAFF_ACCESS_TOKEN` is optional: with it the workflow also sends the settings of the theme. The
+settings that are not in `theme-settings.psd1` then each take a secret of their own:
+
+| Secret                                        | The setting it fills      |
+| --------------------------------------------- | ------------------------- |
+| `GHOST_THEME_SETTING_CONTENT_API_KEY`         | `content_api_key`         |
+| `GHOST_THEME_SETTING_GOOGLE_ANALYTICS_ID`     | `google_analytics_id`     |
+| `GHOST_THEME_SETTING_AZURE_BLOB_SAS_URI`      | `azure_blob_sas_uri`      |
+| `GHOST_THEME_SETTING_GITHUB_CLIENT_ID`        | `github_client_id`        |
+| `GHOST_THEME_SETTING_GITHUB_DEVICE_PROXY_URL` | `github_device_proxy_url` |
+
+A setting without its secret is left as it is on the live site. Ghost Admin shows the values the live site has
+now under **Settings > Design**, and your staff access token on your profile.
+
+When these values are available on this machine, you do not have to type them in on GitHub: use
+`./set-secrets.ps1` to get them synced. It takes each value from where the scripts take it, the environment,
+`site.local.psd1`, `theme-settings.local.psd1` or a vault, and creates or overwrites the secret with the
+[GitHub CLI](https://cli.github.com), signed in with `gh auth login`. Run it again whenever a value here changes.
+It shows the names and not the values, and leaves a secret alone that has no value here. Only
+`-WhatIf -ShowValue` shows the values, in plain text, to check what would be sent: that is for your own eyes, and
+an agent does not run it.
+
+```powershell
+./set-secrets.ps1 -WhatIf              # which secrets would be set, and where each value comes from
+./set-secrets.ps1 -WhatIf -ShowValue   # the same, with the values in plain text
+./set-secrets.ps1                      # the Admin API key and the four of the theme package
+./set-secrets.ps1 -ThemeSettings       # also the staff access token and the settings of the theme
+```
+
+For `-ThemeSettings`, `theme-settings.local.psd1` has to hold the values of the live site, as `./pull.ps1` writes
+them: `content_api_key` is another one on the site on this machine.
 
 ## Where everything comes from
 
@@ -340,6 +365,7 @@ after a year at most: the workflow then fails on the theme.
 | ----------------------------- | -------------------------------------------------------------------------- |
 | `site.psd1`                   | What everybody may know: the address of the site, the theme name, the port |
 | `site.local.psd1`             | Where the theme comes from, on this machine. Git ignores it                |
+| `set-secrets.ps1`             | Syncs the secrets of the workflow on GitHub with the values that are here  |
 | `tools/Initialize-Site.ps1`   | Reads the settings and installs the module Ghost when it is missing        |
 | `tools/Get-SiteSecret.ps1`    | Finds a key of the live site: environment, vault, prompt                   |
 | `tools/Get-ThemePackage.ps1`  | Downloads the newest package of the theme from the feed                    |
