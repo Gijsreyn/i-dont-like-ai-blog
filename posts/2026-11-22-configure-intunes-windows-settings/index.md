@@ -1,23 +1,24 @@
 ---
-title: "Configure Intune's Windows settings with Microsoft DSC"
+title: "Test Windows policies from Intune custom profiles with Microsoft DSC"
 status: draft
 tags: ["Microsoft Desired State Configuration v3", "Azure"]
-custom_excerpt: "The settings Intune pushes to Windows, applied from a YAML file with Microsoft DSC."
+custom_excerpt: "Test and apply two device-scoped Windows policies from YAML on an unenrolled Windows 11 Azure VM."
 ---
 
 Back in the days, I was responsible for configuring Mobile Device Management (MDM) together with Microsoft Intune and System Center Configuration Manager (SCCM). Those days are gone, but it learned me to work with OMA-URI.
 
-Fast forward a couple of years and I was reading through the Microsoft DSC repository. I stopped and saw a folder i hadn't seen before. It was called `adapters/csp`, and its manifest said it "Adapts installed Windows MDM Bridge WMI classes into DSC resources." I had to ask what the MDM part was about. Was this really Mobile Device Management, inside DSC?
+Fast forward a couple of years and I was reading through the Microsoft DSC repository. I stopped at a folder I hadn't seen before: `adapters/csp`. The [adapter reference][14] describes how it exposes Windows MDM Bridge classes as DSC resources. Was this really Mobile Device Management, inside DSC?
 
-It was. The settings that Intune delivers to a Windows machine can now be tested and set from a DSC configuration document, on a machine Intune has never seen.
+It was. Some of the same settings Intune delivers to Windows can be tested and set from a DSC configuration document, even on a machine Intune has never seen.
 
-In this tutorial, you'll build a Windows 11 VM in Azure, install the DSC preview that ships the adapter, and apply a Windows Update policy and a Defender policy to it. You'll do all of it without opening a single port on the VM.
+If you already work with Intune custom profiles, this lab shows how to test and apply device-scoped Windows Update and Defender settings on a disposable, unenrolled Windows 11 Enterprise VM in Azure. Azure Run Command doesn't require an inbound SSH or RDP rule, but the VM still needs outbound HTTPS for Run Command and the DSC download.
 
 ## Prerequisites
 
 To follow along, you need:
 
 - An Azure subscription that may run Windows 11 VMs. That takes [a license that allows it][01], such as a Visual Studio subscription for testing.
+- Permissions to create the demo resource group, deploy the VM and its network resources, and [invoke Run Command][06].
 - The Azure CLI with Bicep, signed in with `az login`.
 - PowerShell 7 on your own machine.
 - Basic familiarity with Microsoft DSC configuration documents
@@ -26,17 +27,17 @@ To follow along, you need:
 
 Intune doesn't change Windows settings itself. It sends them to Configuration Service Providers, or CSPs, which are the interface Windows offers to any MDM server. If you have ever typed an OMA-URI like `./Device/Vendor/MSFT/Policy/Config/Update/ActiveHoursStart` into a custom profile, you have addressed a CSP directly.
 
-Windows also exposes those CSPs locally, through a WMI provider called the MDM Bridge. Every CSP area is a WMI class with a name that starts with `MDM_`. The new adapter arrived in [DSC 3.4.0-preview.3][02]. It lists those classes and turns each one into a DSC resource. The Update policies become `Microsoft.Windows.CSP/MDM_Policy_Config01_Update02`, and `ActiveHoursStart` is a property on it.
+Windows exposes a subset of CSP settings locally through a WMI provider called the MDM Bridge. The adapter first shipped in [DSC 3.4.0-preview.2][02]; the install script below uses `preview.3`. The [adapter][14] exposes eligible `MDM_*` classes installed on the target machine. For example, the [Update bridge class][15] becomes `Microsoft.Windows.CSP/MDM_Policy_Config01_Update02`, and `ActiveHoursStart` is a property on it.
 
-There's a catch here, which shaped the whole tutorial. Device settings only work when the caller is _LocalSystem_. My first plan was to push the document over the [SSH prototype][03] I've been working on. But when reading through the adapter's code, it stopped me. An SSH session runs as the account you sign in with, and the adapter's error message leaves no room: "An elevated administrator is not sufficient." Microsoft's own [guidance for the bridge][04] tells you to start PowerShell with `psexec -s`.
+The [adapter requires LocalSystem][14] for device-scoped settings. My first plan was to push the document over the [SSH prototype][03] I've been working on, but an SSH session runs as the account you sign in with. Even an elevated administrator isn't LocalSystem. Microsoft's own [guidance for the bridge][04] tells you to start PowerShell with `psexec -s`.
 
-Then I remembered that Azure already has something that runs as SYSTEM on every VM, and that is Run Command.
+Then I remembered that Azure Run Command runs as SYSTEM on Windows VMs.
 
 ## Setting up the virtual machine
 
-I had a Bicep template left from an SSH demo, built on Azure Verified Modules. For this tutorial I removed almost everything from it. The storage account, the managed identity, the custom script extension and the inbound SSH rule are gone. What remains is a virtual network and a VM with no inbound rules at all.
+I had a Bicep template left from an SSH demo, built on Azure Verified Modules. For this tutorial I removed the storage account, managed identity, custom script extension and inbound SSH rule. The VM still has a public IP for outbound connectivity, but the template adds no custom inbound rules. The [default network security group rules][17] still apply.
 
-The one change is the image. The Policy CSP lists client editions, and the reference for the bridge classes says no server version is supported. So this VM runs Windows 11 Enterprise.
+The other change is the image. The [Update][15] and [Defender][16] bridge class references list no supported Windows Server version, so this lab uses Windows 11 Enterprise.
 
 ```bicep
 imageReference: {
@@ -48,7 +49,7 @@ imageReference: {
 ```
 
 > [!NOTE]
-> You can find the full template in my [GitHub repository][05].
+> Download the [demo files][05] from my GitHub repository and open PowerShell in the demo directory so `infra/main.bicep` resolves.
 
 Create a resource group and deploy the template. The deployment asks for an administrator password that you won't need again.
 
@@ -59,7 +60,7 @@ az deployment group create --resource-group rg-dsc-csp-demo --template-file infr
 
 ### Installing DSC with Run Command
 
-[Run Command][06] uses the VM agent to run a script inside the VM. It runs as SYSTEM and it needs no open port, which is exactly what the adapter asks for. Save the following script as `install-dsc.ps1`. It downloads the release from GitHub, unpacks it and adds it to the machine path.
+[Run Command][06] uses the VM agent to run a script as SYSTEM, which is exactly what the adapter asks for. Use the included `install-dsc.ps1`, or save the following script under that name. It downloads the release from GitHub, unpacks it and adds it to the machine path.
 
 ```powershell
 $ProgressPreference = 'SilentlyContinue'
@@ -84,10 +85,10 @@ az vm run-command invoke --resource-group rg-dsc-csp-demo --name vm-dscdemo `
     --query 'value[0].message' --output tsv
 ```
 
-![Figure 1: Install Microsoft DSC in Azure VM][09]
+![Figure 1: Run Command reporting LocalSystem in the original preview.2 lab run][09]
 
 > [!INFO]
-> The `whoami` line is your proof. If it doesn't answer `nt authority\system`, the adapter will refuse every device setting later on.
+> With the script above, check that `dsc --version` reports `3.4.0-preview.3` and `whoami` reports `nt authority\system`. The screenshot is from the earlier `preview.2` run and shows the identity check, not the version installed by this script.
 
 ## Building the configuration document
 
@@ -101,7 +102,7 @@ Let's start with finding the CSP resources first.
 
 ### Finding the CSP resources
 
-The adapter can tell you which resources this Windows build offers. Run Command returns only the last 4,096 bytes of output and the full list is much longer than that, so filter on the VM and bring back only the two areas you need. Save this as `list-csp.ps1` and send it the same way as the install script.
+The adapter can tell you which resources this Windows build offers. [Run Command][06] returns only the last 4,096 bytes of output, so filter on the VM to keep the output short. Use `list-csp.ps1` and send it the same way as the install script.
 
 ```powershell
 & "$env:ProgramFiles\dsc\dsc.exe" resource list --adapter Microsoft.Windows.Adapter/ConfigurationServiceProvider |
@@ -112,11 +113,11 @@ The adapter can tell you which resources this Windows build offers. Run Command 
 ![Figure 2: List CSP adapter resources in Azure VM][10]
 
 > [!INFO]
-> Each entry in the list also has a `capabilities` field. A resource without `set` in it is read only, because its class has no writable properties.
+> This example prints only the type names. To check whether a class supports `set`, list that specific type and inspect its `capabilities` field instead. The [adapter reference][14] explains how those capabilities are derived.
 
 ### Writing the Windows Update resource
 
-Create a file named `csp.dsc.yaml`. A resource is one CSP area. `ParentID` and `InstanceID` are the two halves of the path you know from the OMA-URI, and the other properties are the policies.
+Use the included `csp.dsc.yaml` or build it from the next two snippets. `ParentID` and `InstanceID` are the WMI keys for this [Update class][15]: the parent path and the instance identifier under it. The other properties are the settings to manage.
 
 ```yaml
 $schema: https://aka.ms/dsc/schemas/v3/bundled/config/document.json
@@ -133,7 +134,7 @@ resources:
 
 ### Adding the Defender resource
 
-Defender works the same way with a different class. Add this resource below the first one.
+Defender works the same way with its [own bridge class][16]. If you're building the file yourself, add this resource below the first one.
 
 ```yaml
 - name: Defender
@@ -146,7 +147,7 @@ Defender works the same way with a different class. Add this resource below the 
 ```
 
 > [!TIP]
-> List only the policies you care about. The adapter tests and sets the properties in your document and leaves every other policy in that area alone.
+> List only the policies you care about. The [adapter][14] tests the properties you specify and preserves omitted properties when updating an existing instance.
 
 ## Applying and verifying the configuration
 
@@ -154,7 +155,7 @@ The document is on your machine and `dsc` is on the VM. Run Command connects the
 
 ### Sending the document through Run Command
 
-I didn't want to copy files to the VM, so the document travels as a parameter. Save this as `run-dsc.ps1`. It decodes the document, hands it to `dsc` and prints one line per resource.
+I didn't want to copy files to the VM, so the document travels as a parameter. Use the included `run-dsc.ps1` or save the following script under that name. It decodes the document, hands it to `dsc` and prints one line per resource.
 
 ```powershell
 param([string]$Operation, [string]$Document)
@@ -180,23 +181,30 @@ $document = [Convert]::ToBase64String([IO.File]::ReadAllBytes($documentPath))
 
 az vm run-command invoke --resource-group rg-dsc-csp-demo --name vm-dscdemo `
     --command-id RunPowerShellScript --scripts '@run-dsc.ps1' `
-    --parameters "Operation=set" "Document=$document" `
+    --parameters "Operation=test" "Document=$document" `
     --query 'value[0].message' --output tsv
 ```
 
-On this newly created VM, the test is going to say that neither resource is in it's desired state.
+In the original lab run, both resources reported `False` before `set`. Your baseline reflects the settings already on your VM.
 
 ![Figure 3: Run `test` operation against Azure VM][11]
 
-Change `Operation=test` to `Operation=set` and run it again. Now the output lists the properties that changed. A second test confirms that both resources are where the document wants them.
+Change `Operation=test` to `Operation=set` and run it again. The original `set` output listed more properties than the YAML specified, so don't use that list on its own as proof of which settings changed.
 
 ![Figure 4: Run `set` operation against Azure VM][12]
 
-If you look at the registry settings on the Azure VM, you'll notice the values have been set:
+Run the same command once more with `Operation=test`. If both resources match the document, the expected output is:
 
-![Figure 5: Machine is in the desired state][13]
+```text
+Windows Update in desired state: True
+Defender in desired state: True
+```
 
-Undoing it is the same motion. Add `_exist: false` to a resource, run `set` once more, and the adapter removes the policy instance.
+The registry capture from the original run shows the three Windows Update values. It doesn't verify Defender; use the final DSC test to check both resources.
+
+![Figure 5: Windows Update policy values in the registry from the original lab run][13]
+
+To request deletion, add `_exist: false` under the resource's `properties`, keep its keys, and run `set` again. The [underlying CSP must support deletion][14]. This removes the instance; it doesn't restore its previous values.
 
 ## Knowing the limits
 
@@ -204,19 +212,21 @@ A few things are worth knowing before this goes anywhere near production.
 
 The SYSTEM requirement doesn't go away. Run Command solved it here. On machines outside Azure you need another way to start `dsc` as SYSTEM, and a scheduled task is the obvious one.
 
-Group Policy can get in the way. When Group Policy and the Policy CSP set the same policy, Group Policy wins by default. The [MDMWinsOverGP][07] policy turns that around, but it only covers the Policy CSP.
+Group Policy can get in the way. Microsoft documents [MDMWinsOverGP][07] for conflicts between Group Policy and supported settings delivered over the MDM channel through Policy CSP. That isn't a guarantee about precedence for settings written locally by DSC.
 
-The same goes for Intune. If a device is enrolled, Intune writes to the same CSPs, so pick one owner for each setting.
+If a device is enrolled, avoid managing the same setting with both an Intune profile and this DSC configuration. This lab doesn't test what happens when they overlap.
 
-The adapter is part of a preview release. It reads and writes settings, and it can't trigger the actions some CSPs have.
+The adapter is part of a preview release. It reads and writes supported settings, but it [doesn't invoke CSP actions][14].
 
-## Conclusion
+## Cleaning up
 
-You built a Windows 11 VM, installed a DSC preview on it and applied Windows Update and Defender policies from a YAML file. The machine has no MDM enrollment and no open ports. When you're done, one command removes everything.
+When you're done, delete the dedicated demo resource group. This deletes every resource in that group, not just the VM.
 
 ```powershell
 az group delete --name rg-dsc-csp-demo --yes
 ```
+
+## Conclusion
 
 I started with a question about three letters in a folder name. Next I want to try the AssignedAccess CSP and build a kiosk this way. Microsoft's [kiosk documentation][08] solves that today with a PowerShell script and `psexec`, and a configuration document you can test seems like the better deal.
 
@@ -224,10 +234,10 @@ Which Intune setting would you move into a configuration document first?
 
 <!-- Link reference definitions -->
 [01]: https://learn.microsoft.com/azure/virtual-machines/windows/windows-desktop-multitenant-hosting-deployment
-[02]: https://github.com/PowerShell/DSC/releases/tag/v3.4.0-preview.3
+[02]: https://github.com/PowerShell/DSC/releases/tag/v3.4.0-preview.2
 [03]: https://github.com/PowerShell/DSC/pull/1810
 [04]: https://learn.microsoft.com/windows/client-management/using-powershell-scripting-with-the-wmi-bridge-provider
-[05]: https://github.com/Gijsreyn/i-dont-like-ai-blog/tree/main/posts/2026-11-22-configure-intunes-windows-settings/infra
+[05]: https://github.com/Gijsreyn/i-dont-like-ai-blog/tree/main/posts/2026-11-22-configure-intunes-windows-settings
 [06]: https://learn.microsoft.com/azure/virtual-machines/windows/run-command
 [07]: https://learn.microsoft.com/windows/client-management/mdm/policy-csp-controlpolicyconflict
 [08]: https://learn.microsoft.com/windows/configuration/assigned-access/quickstart-kiosk
@@ -235,4 +245,8 @@ Which Intune setting would you move into a configuration document first?
 [10]: images/list-csp-adapter-resources.png
 [11]: images/run-test-operation.png
 [12]: images/run-set-operation.png
-[13]: images/show-dsc-system-azure-vm.png
+[13]: images/dsc-settings-set-azure-vm.png
+[14]: https://github.com/PowerShell/DSC/blob/v3.4.0-preview.3/docs/reference/resources/Microsoft/Windows/Adapter/ConfigurationServiceProvider/index.md
+[15]: https://learn.microsoft.com/windows/win32/dmwmibridgeprov/mdm-policy-config01-update02
+[16]: https://learn.microsoft.com/windows/win32/dmwmibridgeprov/mdm-policy-config01-defender02
+[17]: https://learn.microsoft.com/azure/virtual-network/network-security-groups-overview#default-security-rules
