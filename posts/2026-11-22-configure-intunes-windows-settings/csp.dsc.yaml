@@ -1,0 +1,17 @@
+$schema: https://aka.ms/dsc/schemas/v3/bundled/config/document.json
+resources:
+- name: Windows Update
+  type: Microsoft.Windows.CSP/MDM_Policy_Config01_Update02
+  properties:
+    ParentID: ./Vendor/MSFT/Policy/Config
+    InstanceID: Update
+    ActiveHoursStart: 8
+    ActiveHoursEnd: 18
+    DeferQualityUpdatesPeriodInDays: 7
+- name: Defender
+  type: Microsoft.Windows.CSP/MDM_Policy_Config01_Defender02
+  properties:
+    ParentID: ./Vendor/MSFT/Policy/Config
+    InstanceID: Defender
+    AllowCloudProtection: 1
+    PUAProtection: 1
