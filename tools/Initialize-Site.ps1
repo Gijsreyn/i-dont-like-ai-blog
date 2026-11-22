@@ -102,7 +102,10 @@ else {
                 Scope      = 'CurrentUser'
                 Repository = 'PSGallery'
             }
-            Install-PSResource @install -TrustRepository
+            # Also in a dry run, such as ./publish.ps1 -WhatIf: the dry run needs the commands of the module to
+            # look at the site, and installing it changes nothing there. Without this the -WhatIf of the script
+            # reaches Install-PSResource, which then installs nothing and fails.
+            Install-PSResource @install -TrustRepository -WhatIf:$false -Confirm:$false
         }
         catch {
             $failure = "The Ghost module $minimum or later could not be installed from the PowerShell Gallery."

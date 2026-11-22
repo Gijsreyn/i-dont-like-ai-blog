@@ -25,7 +25,7 @@
     TagsPath             = 'tags'
 
     # The Ghost module of the PowerShell Gallery that the scripts need at least.
-    GhostVersion         = '0.4.0'
+    GhostVersion         = '0.6.0'
 
     # The site on your own machine: the folder it is installed in, which git ignores, and its port.
     LocalPath            = '.local-ghost'
