@@ -17,11 +17,9 @@ If you already work with Intune custom profiles, this lab shows how to test and 
 
 To follow along, you need:
 
-- An Azure subscription that may run Windows 11 VMs. That takes [a license that allows it][01], such as a Visual Studio subscription for testing.
-- Permissions to create the demo resource group, deploy the VM and its network resources, and [invoke Run Command][06].
-- The Azure CLI with Bicep, signed in with `az login`.
-- PowerShell 7 on your own machine.
-- Basic familiarity with Microsoft DSC configuration documents
+- A disposable, unenrolled Windows 11 Enterprise test machine, or an Azure subscription and [a license][01] that lets you deploy one.
+- For Azure Run Command: the Azure CLI, signed in with `az login`, and permission to [invoke Run Command][06]. If you're deploying the demo VM, you also need Bicep and permissions to create the resource group and deploy the VM and its network resources.
+- PowerShell 7 on your own machine and basic familiarity with Microsoft DSC configuration documents.
 
 ## Understanding the CSP adapter
 
@@ -34,6 +32,9 @@ The [adapter requires LocalSystem][14] for device-scoped settings. My first plan
 Then I remembered that Azure Run Command runs as SYSTEM on Windows VMs.
 
 ## Setting up the virtual machine
+
+> [!TIP]
+> Already have an unenrolled Windows 11 Enterprise test machine? Skip the Bicep deployment. For an existing Azure VM, start at [Installing DSC with Run Command](#installing-dsc-with-run-command) and substitute your VM name and resource group in every Run Command example. For a machine outside Azure, skip Run Command too: run `install-dsc.ps1` and the DSC commands locally in a PowerShell session running as LocalSystem, following the [WMI Bridge guidance][04]. If the DSC preview used here is already installed, go straight to [Finding the CSP resources](#finding-the-csp-resources).
 
 I had a Bicep template left from an SSH demo, built on Azure Verified Modules. For this tutorial I removed the storage account, managed identity, custom script extension and inbound SSH rule. The VM still has a public IP for outbound connectivity, but the template adds no custom inbound rules. The [default network security group rules][17] still apply.
 
@@ -102,7 +103,7 @@ Let's start with finding the CSP resources first.
 
 ### Finding the CSP resources
 
-The adapter can tell you which resources this Windows build offers. [Run Command][06] returns only the last 4,096 bytes of output, so filter on the VM to keep the output short. Use `list-csp.ps1` and send it the same way as the install script.
+The adapter can tell you which resources this Windows build offers. [Run Command][06] returns only the last 4,096 bytes of output, so filter on the VM to keep the output short. Send `list-csp.ps1` the same way as the install script, or run it directly in your local LocalSystem session.
 
 ```powershell
 & "$env:ProgramFiles\dsc\dsc.exe" resource list --adapter Microsoft.Windows.Adapter/ConfigurationServiceProvider |
@@ -149,9 +150,42 @@ Defender works the same way with its [own bridge class][16]. If you're building 
 > [!TIP]
 > List only the policies you care about. The [adapter][14] tests the properties you specify and preserves omitted properties when updating an existing instance.
 
+### Mapping your own OMA-URI
+
+The adapter doesn't translate OMA-URIs. Start with the [CSP reference][18] for your setting to check its scope, supported Windows editions and versions, and allowed values. Then look for the corresponding class in the [MDM Bridge reference][19] and confirm that the adapter lists it on your test machine.
+
+For `./Device/Vendor/MSFT/Policy/Config/Update/ActiveHoursStart`, the [Update bridge class][15] gives you this mapping:
+
+| DSC field | Value |
+| --- | --- |
+| `type` | `Microsoft.Windows.CSP/MDM_Policy_Config01_Update02` |
+| `ParentID` | `./Vendor/MSFT/Policy/Config` |
+| `InstanceID` | `Update` |
+| Property | `ActiveHoursStart` |
+
+Use the keys documented for the class rather than splitting the URI by position. To inspect a candidate, run this on the test machine, substituting its resource type:
+
+```powershell
+$resource = & "$env:ProgramFiles\dsc\dsc.exe" resource list 'Microsoft.Windows.CSP/MDM_Policy_Config01_Update02' `
+    --adapter Microsoft.Windows.Adapter/ConfigurationServiceProvider | ConvertFrom-Json
+$resource.capabilities
+$resource.schema.properties.ActiveHoursStart | ConvertTo-Json -Depth 10
+```
+
+Check for `set` in the capabilities and make sure the exact property appears in the schema and isn't marked `readOnly`. If you're using Run Command, print just the property you need rather than the full schema. If the class or property isn't exposed on that machine, you can't manage the setting through this adapter there. If both are exposed, check the CSP's allowed values and run `test` before `set`: discovery alone doesn't guarantee that the underlying CSP accepts the write.
+
 ## Applying and verifying the configuration
 
-The document is on your machine and `dsc` is on the VM. Run Command connects the two.
+The document is on your machine and `dsc` is on the VM. Run Command connects the two. If you're running locally instead, put `csp.dsc.yaml` on the test machine. In a LocalSystem PowerShell session, open the directory containing the file and run the sequence directly:
+
+```powershell
+$dsc = "$env:ProgramFiles\dsc\dsc.exe"
+& $dsc config test --file .\csp.dsc.yaml
+& $dsc config set --file .\csp.dsc.yaml
+& $dsc config test --file .\csp.dsc.yaml
+```
+
+Run the commands one at a time and check each result before continuing. You can skip the Run Command steps below.
 
 ### Sending the document through Run Command
 
@@ -220,7 +254,7 @@ The adapter is part of a preview release. It reads and writes supported settings
 
 ## Cleaning up
 
-When you're done, delete the dedicated demo resource group. This deletes every resource in that group, not just the VM.
+Only run this if you created the dedicated demo resource group for this lab. It deletes every resource in that group, not just the VM. If you reused a machine, skip this command.
 
 ```powershell
 az group delete --name rg-dsc-csp-demo --yes
@@ -250,3 +284,5 @@ Which Intune setting would you move into a configuration document first?
 [15]: https://learn.microsoft.com/windows/win32/dmwmibridgeprov/mdm-policy-config01-update02
 [16]: https://learn.microsoft.com/windows/win32/dmwmibridgeprov/mdm-policy-config01-defender02
 [17]: https://learn.microsoft.com/azure/virtual-network/network-security-groups-overview#default-security-rules
+[18]: https://learn.microsoft.com/windows/client-management/mdm/configuration-service-provider-reference
+[19]: https://learn.microsoft.com/windows/win32/dmwmibridgeprov/mdm-bridge-wmi-provider-portal
