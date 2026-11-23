@@ -106,7 +106,8 @@ elseif ($site.ThemeRepository) {
     $start['ThemeRepository'] = $site.ThemeRepository
 }
 else {
-    Write-Warning -Message 'No theme is set, so the site shows the theme Ghost comes with. See site.local.example.psd1.'
+    $advice = 'The settings of the theme are left out. See site.local.example.psd1.'
+    Write-Warning -Message "No theme is set, so the site shows the theme Ghost comes with. $advice"
 }
 $local = Start-GhostLocalSite @start -Connect
 
@@ -155,7 +156,11 @@ if ($FromLive) {
 
 # The settings of the theme, which a new site does not have and which the live site may have different. Only the
 # owner may change them, so this part runs with the staff access token of the local site.
-if ($site.ThemeSettingsPath -and (Test-Path -LiteralPath $site.ThemeSettingsPath)) {
+#
+# They are the settings of the theme of the live site. The theme Ghost comes with has other ones and refuses
+# these, so a site without the theme is left alone. That is the site of the workflow Check.
+$hasSettings = $site.ThemeSettingsPath -and (Test-Path -LiteralPath $site.ThemeSettingsPath)
+if ($local.Theme -and $hasSettings) {
     $ownerKey = [System.Net.NetworkCredential]::new('', $local.StaffAccessToken).SecurePassword
     Connect-Ghost -Url $local.Url -AdminApiKey $ownerKey | Out-Null
     try {

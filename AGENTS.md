@@ -230,7 +230,8 @@ read from `.local-ghost/local-ghost.json`: nothing has to be filled in for it.
 
 The site has the theme of the live site when `site.local.psd1` says where the theme is. A folder of the theme on
 this machine is linked into the site, so a change to the theme shows as soon as the page is reloaded, next to the
-posts. Without a theme the site shows the one Ghost comes with.
+posts. Without a theme the site shows the one Ghost comes with, and the settings of the theme are not sent: that
+theme does not have them. The workflow `Check` runs that way.
 
 `-FromLive` reads the content of the live site and changes nothing there.
 
