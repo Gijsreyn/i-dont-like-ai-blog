@@ -2,7 +2,7 @@
 title: "Test Windows policies from Intune custom profiles with Microsoft DSC"
 status: draft
 tags: ["Microsoft Desired State Configuration v3", "Azure"]
-custom_excerpt: "Test and apply two device-scoped Windows policies from YAML on an unenrolled Windows 11 Azure VM."
+custom_excerpt: "Test and apply two device-scoped Windows policies from YAML."
 ---
 
 Back in the days, I was responsible for configuring Mobile Device Management (MDM) together with Microsoft Intune and System Center Configuration Manager (SCCM). Those days are gone, but it learned me to work with OMA-URI.
@@ -25,7 +25,7 @@ To follow along, you need:
 
 Intune doesn't change Windows settings itself. It sends them to Configuration Service Providers, or CSPs, which are the interface Windows offers to any MDM server. If you have ever typed an OMA-URI like `./Device/Vendor/MSFT/Policy/Config/Update/ActiveHoursStart` into a custom profile, you have addressed a CSP directly.
 
-Windows exposes a subset of CSP settings locally through a WMI provider called the MDM Bridge. The adapter first shipped in [DSC 3.4.0-preview.2][02]; the install script below uses `preview.3`. The [adapter][14] exposes eligible `MDM_*` classes installed on the target machine. For example, the [Update bridge class][15] becomes `Microsoft.Windows.CSP/MDM_Policy_Config01_Update02`, and `ActiveHoursStart` is a property on it.
+Windows exposes a subset of CSP settings locally through a WMI provider called the MDM Bridge. The adapter first shipped in [DSC 3.4.0-preview.2][02]. The install script below uses `preview.3`. The [adapter][14] exposes eligible `MDM_*` classes installed on the target machine. For example, the [Update bridge class][15] becomes `Microsoft.Windows.CSP/MDM_Policy_Config01_Update02`, and `ActiveHoursStart` is a property on it.
 
 The [adapter requires LocalSystem][14] for device-scoped settings. My first plan was to push the document over the [SSH prototype][03] I've been working on, but an SSH session runs as the account you sign in with. Even an elevated administrator isn't LocalSystem. Microsoft's own [guidance for the bridge][04] tells you to start PowerShell with `psexec -s`.
 
@@ -156,12 +156,12 @@ The adapter doesn't translate OMA-URIs. Start with the [CSP reference][18] for y
 
 For `./Device/Vendor/MSFT/Policy/Config/Update/ActiveHoursStart`, the [Update bridge class][15] gives you this mapping:
 
-| DSC field | Value |
-| --- | --- |
-| `type` | `Microsoft.Windows.CSP/MDM_Policy_Config01_Update02` |
-| `ParentID` | `./Vendor/MSFT/Policy/Config` |
-| `InstanceID` | `Update` |
-| Property | `ActiveHoursStart` |
+| DSC field    | Value                                                |
+|--------------|------------------------------------------------------|
+| `type`       | `Microsoft.Windows.CSP/MDM_Policy_Config01_Update02` |
+| `ParentID`   | `./Vendor/MSFT/Policy/Config`                        |
+| `InstanceID` | `Update`                                             |
+| Property     | `ActiveHoursStart`                                   |
 
 Use the keys documented for the class rather than splitting the URI by position. To inspect a candidate, run this on the test machine, substituting its resource type:
 
@@ -234,11 +234,11 @@ Windows Update in desired state: True
 Defender in desired state: True
 ```
 
-The registry capture from the original run shows the three Windows Update values. It doesn't verify Defender; use the final DSC test to check both resources.
+The registry capture from the original run shows the three Windows Update values. It doesn't verify Defender, so use the final DSC test to check both resources.
 
 ![Figure 5: Windows Update policy values in the registry from the original lab run][13]
 
-To request deletion, add `_exist: false` under the resource's `properties`, keep its keys, and run `set` again. The [underlying CSP must support deletion][14]. This removes the instance; it doesn't restore its previous values.
+To request deletion, add `_exist: false` under the resource's `properties`, keep its keys, and run `set` again. The [underlying CSP must support deletion][14]. This removes the instance without restoring its previous values.
 
 ## Knowing the limits
 
