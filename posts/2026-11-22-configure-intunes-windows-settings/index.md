@@ -3,6 +3,8 @@ title: "Test Windows policies from Intune custom profiles with Microsoft DSC"
 status: draft
 tags: ["Microsoft Desired State Configuration v3", "Azure"]
 custom_excerpt: "Test and apply two device-scoped Windows policies from YAML."
+feature_image: images/cover.png
+feature_image_alt: "A Windows 11 laptop with a configuration document that connects to an update icon and a shield icon."
 ---
 
 Back in the days, I was responsible for configuring Mobile Device Management (MDM) together with Microsoft Intune and System Center Configuration Manager (SCCM). Those days are gone, but it learned me to work with OMA-URI.
