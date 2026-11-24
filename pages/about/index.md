@@ -2,6 +2,7 @@
 title: "About"
 status: published
 published_at: "2025-09-18T21:40:25.000Z"
+meta_description: "I'm Gijs Reijn, a Senior Azure Cloud Engineer with a decade of experience in IT. I contribute to open source and write about what I learn building in the cloud."
 ---
 
 <figure class="kg-card kg-image-card"><img src="https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be709814/content/images/2025/09/ai-generated-image-1756953726789.png" class="kg-image" alt="" loading="lazy" width="1344" height="768" srcset="https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be709814/content/images/size/w600/2025/09/ai-generated-image-1756953726789.png 600w, https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be709814/content/images/size/w1000/2025/09/ai-generated-image-1756953726789.png 1000w, https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be709814/content/images/2025/09/ai-generated-image-1756953726789.png 1344w" sizes="(min-width: 720px) 720px"></figure><p>I'm a <strong>Senior Azure Cloud Engineer</strong> with a decade of experience in IT. I've worked on everything from keeping traditional servers humming along to building modern, cloud-first solutions in Azure. What I've learned along the way is this: solving challenging technical problems is great, but making life easier for other people through those solutions is even better.</p>

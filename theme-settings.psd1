@@ -22,8 +22,8 @@
 
     social_linkedin_url    = 'https://www.linkedin.com/in/gijs-reijn-582b81198'
 
-    social_bluesky_url     = 'https://bsky.app/gijsreijn.bsky.social'
+    social_bluesky_url     = 'https://bsky.app/profile/gijsreijn.bsky.social'
 
     # Manual monthly visitor count (e.g., '5.2K', '12K+', '1.5M')
-    monthly_visitors_count = '5K+'
+    monthly_visitors_count = '5K+' # Just a counter if the monthly visitors can't be captured from Google Analytics
 }
