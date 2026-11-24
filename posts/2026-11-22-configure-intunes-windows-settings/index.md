@@ -1,6 +1,6 @@
 ---
 title: "Test Windows policies from Intune custom profiles with Microsoft DSC"
-status: draft
+status: published
 tags: ["Microsoft Desired State Configuration v3", "Azure"]
 custom_excerpt: "Test and apply two device-scoped Windows policies from YAML."
 feature_image: images/cover.png
@@ -89,7 +89,7 @@ az vm run-command invoke --resource-group rg-dsc-csp-demo --name vm-dscdemo `
 
 ![Figure 1: Run Command reporting LocalSystem in the original preview.2 lab run][09]
 
-> [!INFO]
+> [!NOTE]
 > With the script above, check that `dsc --version` reports `3.4.0-preview.3` and `whoami` reports `nt authority\system`. The screenshot is from the earlier `preview.2` run and shows the identity check, not the version installed by this script.
 
 ## Building the configuration document
@@ -114,7 +114,7 @@ The adapter can tell you which resources this Windows build offers. [Run Command
 
 ![Figure 2: List CSP adapter resources in Azure VM][10]
 
-> [!INFO]
+> [!NOTE]
 > This example prints only the type names. To check whether a class supports `set`, list that specific type and inspect its `capabilities` field instead. The [adapter reference][14] explains how those capabilities are derived.
 
 ### Writing the Windows Update resource
