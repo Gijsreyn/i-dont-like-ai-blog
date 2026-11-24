@@ -4,7 +4,6 @@ status: draft
 tags: ["Microsoft Desired State Configuration v3", "Azure"]
 custom_excerpt: "Test and apply two device-scoped Windows policies from YAML."
 feature_image: images/cover.png
-feature_image_alt: "A Windows 11 laptop with a configuration document that connects to an update icon and a shield icon."
 ---
 
 Back in the days, I was responsible for configuring Mobile Device Management (MDM) together with Microsoft Intune and System Center Configuration Manager (SCCM). Those days are gone, but it learned me to work with OMA-URI.
@@ -88,7 +87,7 @@ az vm run-command invoke --resource-group rg-dsc-csp-demo --name vm-dscdemo `
     --query 'value[0].message' --output tsv
 ```
 
-![Figure 1: Run Command reporting LocalSystem in the original preview.2 lab run](images/show-dsc-system-azure-vm.png)
+![Figure 1: Run Command reporting LocalSystem in the original preview.2 lab run][09]
 
 > [!INFO]
 > With the script above, check that `dsc --version` reports `3.4.0-preview.3` and `whoami` reports `nt authority\system`. The screenshot is from the earlier `preview.2` run and shows the identity check, not the version installed by this script.
@@ -113,7 +112,7 @@ The adapter can tell you which resources this Windows build offers. [Run Command
     Where-Object { $_ -match 'Update|Defender' }
 ```
 
-![Figure 2: List CSP adapter resources in Azure VM](images/list-csp-adapter-resources.png)
+![Figure 2: List CSP adapter resources in Azure VM][10]
 
 > [!INFO]
 > This example prints only the type names. To check whether a class supports `set`, list that specific type and inspect its `capabilities` field instead. The [adapter reference][14] explains how those capabilities are derived.
@@ -223,11 +222,11 @@ az vm run-command invoke --resource-group rg-dsc-csp-demo --name vm-dscdemo `
 
 In the original lab run, both resources reported `False` before `set`. Your baseline reflects the settings already on your VM.
 
-![Figure 3: Run `test` operation against Azure VM](images/run-test-operation.png)
+![Figure 3: Run `test` operation against Azure VM][11]
 
 Change `Operation=test` to `Operation=set` and run it again. The original `set` output listed more properties than the YAML specified, so don't use that list on its own as proof of which settings changed.
 
-![Figure 4: Run `set` operation against Azure VM](images/run-set-operation.png)
+![Figure 4: Run `set` operation against Azure VM][12]
 
 Run the same command once more with `Operation=test`. If both resources match the document, the expected output is:
 
@@ -238,7 +237,7 @@ Defender in desired state: True
 
 The registry capture from the original run shows the three Windows Update values. It doesn't verify Defender, so use the final DSC test to check both resources.
 
-![Figure 5: Windows Update policy values in the registry from the original lab run](images/dsc-settings-set-azure-vm.png)
+![Figure 5: Windows Update policy values in the registry from the original lab run][13]
 
 To request deletion, add `_exist: false` under the resource's `properties`, keep its keys, and run `set` again. The [underlying CSP must support deletion][14]. This removes the instance without restoring its previous values.
 
@@ -277,6 +276,11 @@ Which Intune setting would you move into a configuration document first?
 [06]: https://learn.microsoft.com/azure/virtual-machines/windows/run-command
 [07]: https://learn.microsoft.com/windows/client-management/mdm/policy-csp-controlpolicyconflict
 [08]: https://learn.microsoft.com/windows/configuration/assigned-access/quickstart-kiosk
+[09]: images/show-dsc-system-azure-vm.png
+[10]: images/list-csp-adapter-resources.png
+[11]: images/run-test-operation.png
+[12]: images/run-set-operation.png
+[13]: images/dsc-settings-set-azure-vm.png
 [14]: https://github.com/PowerShell/DSC/blob/v3.4.0-preview.3/docs/reference/resources/Microsoft/Windows/Adapter/ConfigurationServiceProvider/index.md
 [15]: https://learn.microsoft.com/windows/win32/dmwmibridgeprov/mdm-policy-config01-update02
 [16]: https://learn.microsoft.com/windows/win32/dmwmibridgeprov/mdm-policy-config01-defender02
