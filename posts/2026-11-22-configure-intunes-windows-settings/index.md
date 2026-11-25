@@ -3,7 +3,7 @@ title: "Test Windows policies from Intune custom profiles with Microsoft DSC"
 status: published
 tags: ["Microsoft Desired State Configuration v3", "Azure"]
 custom_excerpt: "Test and apply two device-scoped Windows policies from YAML."
-feature_image: images/cover.png
+feature_image: images/cover.jpg
 feature_image_alt: ''
 ---
 

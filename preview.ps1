@@ -19,6 +19,9 @@
 
     Run it again whenever you want to see a change: only what changed is sent.
 
+    The title of a post is on its cover. Before the posts are sent, cover.ps1 makes the covers again that are
+    missing, or that are behind on their post or on the theme. What you see is then what a publish sends.
+
     Before all that it looks for secrets in the files of the repository, with tools/Test-Secret.ps1, and stops
     when it finds one. -SkipSecretScan leaves that out, for when there is no internet.
 
@@ -170,6 +173,19 @@ if ($local.Theme -and $hasSettings) {
         $localKey = [System.Net.NetworkCredential]::new('', $local.AdminApiKey).SecurePassword
         Connect-Ghost -Url $local.Url -AdminApiKey $localKey | Out-Null
     }
+}
+
+# The covers, before the posts that show them: one that is missing, or whose title, picture or theme changed
+# since it was made, is made again. A cover is not worth stopping for: without it the post keeps the one it had.
+try {
+    $cover = @{ Refresh = $true }
+    if ($start.ContainsKey('ThemePath')) {
+        $cover['ThemePath'] = $start['ThemePath']
+    }
+    & (Join-Path -Path $PSScriptRoot -ChildPath 'cover.ps1') @cover
+}
+catch {
+    Write-Warning -Message "The covers were not brought up to date: $($_.Exception.Message)"
 }
 
 # 4. The tags of this repository, before the posts: a post that names a tag that is not there creates it with

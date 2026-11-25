@@ -22,6 +22,9 @@
     the pages and the posts to the action ghost-deploy-action, which uses the same commands, and runs this script
     with -SettingsOnly for the settings of the theme. You can run the script yourself too.
 
+    Before the posts are sent, cover.ps1 makes the covers again that are missing, or that are behind on their
+    post or on the theme. They are files of this repository: commit what it made.
+
     -WhatIf shows what would change, without changing anything: it only reads. -Local does the whole thing for
     real, but on the site on your own machine, which is how to rehearse a publish.
 
@@ -209,6 +212,18 @@ try {
     }
     elseif ($hasSettings) {
         Write-Information -MessageData 'The settings of the theme are left as they are: -SkipTheme skips them too.'
+    }
+
+    # The covers, before the posts that show them: one that is missing, or whose title, picture or theme
+    # changed since it was made, is made again. In a dry run it only says which. A cover is not worth stopping a
+    # publish for: without it the post keeps the one it had.
+    if (-not $SkipPosts) {
+        try {
+            & (Join-Path -Path $PSScriptRoot -ChildPath 'cover.ps1') -Refresh -WhatIf:$dryRun
+        }
+        catch {
+            Write-Warning -Message "The covers were not brought up to date: $($_.Exception.Message)"
+        }
     }
 
     # 3. The tags, before the posts: a post that names a tag that is not there creates it with only that name.

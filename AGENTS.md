@@ -14,10 +14,12 @@ git switch -c post/why-i-do-not-like-ai                     # 4. branch, commit,
 ```
 
 1. **Start.** `./new-post.ps1 '<title>'` creates `posts/<date>-<slug>/index.md` and a folder `images` next to
-   it. The post starts with `status: draft`.
+   it. The post starts with `status: draft`, and with a cover that has its title on it, see
+   [Pictures and the house style](#pictures-and-the-house-style).
 2. **Write and look.** Write in `index.md`, put pictures in `images`, and run `./preview.ps1` again whenever you
    want to see the result: it takes seconds and only sends what changed. It prints the address of every post. A
-   draft is not in the lists of the site, so open it by that address.
+   draft is not in the lists of the site, so open it by that address. A cover whose title changed is made again
+   first: commit it with the post.
 3. **Rehearse**, when you want to see a publish happen first: `./publish.ps1 -Local` does everything for real,
    but on the site on this machine.
 4. **Pull request.** The workflow `Check` loads the posts into a Ghost site on the runner. It touches nothing
@@ -53,6 +55,10 @@ To publish from this machine instead of through the workflow:
   to it on your own; point out what you notice instead.
 - **Check your work with `./preview.ps1`.** It fails on front matter that Ghost does not take. Say so when you
   could not run it.
+- **A picture looks like the site.** The style is read from the theme, see `brand/README.md`. The prompt for an
+  image generator comes from `./cover.ps1 -Prompt`, not from your own words, and a cover from `./cover.ps1`:
+  both stay on this machine. What a picture says, `feature_image_alt`, is the author's like the rest of the
+  words: propose it, do not write it.
 - **A script passes `-WhatIf` on by name**, `-WhatIf:$WhatIfPreference`, to every command of the module that
   changes something. The `-WhatIf` of a script does not reach the commands of a module by itself; without it a
   dry run changes the site.
@@ -66,7 +72,7 @@ posts/
   2026-11-20-why-i-do-not-like-ai/
     index.md
     images/
-      cover.png
+      cover.jpg
       diagram.png
 ```
 
@@ -79,7 +85,7 @@ title: Why I do not like AI
 status: draft
 tags: [Opinion, AI]
 custom_excerpt: Shown in lists and previews, instead of the first words of the post.
-feature_image: images/cover.png
+feature_image: images/cover.jpg
 feature_image_alt: A robot that shrugs
 ---
 
@@ -153,6 +159,43 @@ pages are here: `./preview.ps1` and `./publish.ps1` create or update them, after
 
 A new book or course needs three things: its page here, its route in the `routes.yaml` of the theme, and for a
 course the tag that its lessons carry.
+
+## Pictures and the house style
+
+The pictures of a post look like the site, and the site is the theme. So the style is not written down in this
+repository: `./cover.ps1` reads it from the theme, its colours, the space behind its pages and the name of the
+site, every time it makes something. [brand/README.md](brand/README.md) says what is taken from where.
+
+```powershell
+./cover.ps1 -Prompt 'a laptop that receives two settings'   # the prompt for a picture, with the style around it
+./cover.ps1 posts/<folder> -Image ~/Downloads/picture.png   # the cover: the title of the post next to the picture
+./cover.ps1 -Refresh                                        # the covers that are behind on their post or the theme
+./cover.ps1 -Check                                          # every cover against the rules
+./cover.ps1 -Sheet -Open                                    # all covers side by side
+./cover.ps1                                                 # the routine in a few lines, for when it is a while ago
+```
+
+- **A cover has the title on it**, with the name of the site, set in the font of the site. The image
+  generator is asked for a picture without text. A post without a picture has a cover too.
+- **Only the picture is done by hand.** `./new-post.ps1` gives a post its first cover and the line
+  `feature_image: images/cover.jpg`. `./preview.ps1` and `./publish.ps1` run `./cover.ps1 -Refresh` before they
+  send the posts: a cover whose title, picture or theme changed is made again, and one that is still right
+  is not touched. A cover that cannot be made is a warning and does not stop them.
+- **The post decides whether it takes part.** A post with another `feature_image`, or with none, is left alone.
+- **Two files in the folder `images`.** `cover.jpg` is the cover, which `feature_image` points to.
+  `cover-art.jpg` is the picture inside it, kept so that the cover can be made again.
+- **The workflow `Publish` sends the covers as they are in the repository**, so a cover that was made again is
+  committed with its post. `./cover.ps1 -Check` says when one is behind.
+- **A cover that changes is uploaded again**, and the old one stays on the site, see [A post](#a-post).
+- **`brand/theme.json` is what was read from the theme the last time.** A machine without the theme makes the
+  same cover from it. When git shows a change in it, the style changed, and the covers follow at the next
+  `./preview.ps1`.
+- **The contact sheet is not in the repository.** `brand/contact-sheet.jpg` is made again every time, and git
+  ignores it.
+- **The theme cuts the picture of a card to 16:9**, so a cover is whole on the cards of the home page and the
+  blog. The list view of a tag is narrower and still cuts the sides.
+- **It needs uv**, which `./preview.ps1` installs on its first run. uv brings Python and what the tool needs by
+  itself, the first time from the internet. Nothing of this reaches a site.
 
 ## The settings of the theme
 
@@ -367,13 +410,18 @@ them: `content_api_key` is another one on the site on this machine.
 | `site.psd1`                   | What everybody may know: the address of the site, the theme name, the port |
 | `site.local.psd1`             | Where the theme comes from, on this machine. Git ignores it                |
 | `set-secrets.ps1`             | Syncs the secrets of the workflow on GitHub with the values that are here  |
+| `cover.ps1`                   | A prompt for a picture and the cover of a post, in the style of the theme  |
 | `tools/Initialize-Site.ps1`   | Reads the settings and installs the module Ghost when it is missing        |
 | `tools/Get-SiteSecret.ps1`    | Finds a key of the live site: environment, vault, prompt                   |
 | `tools/Get-ThemePackage.ps1`  | Downloads the newest package of the theme from the feed                    |
 | `tools/Set-ThemeSetting.ps1`  | Sends the settings of the theme in the two files to a site                 |
 | `tools/Save-ThemeSetting.ps1` | Writes the settings of the theme of a site to the two files                |
 | `tools/Test-Secret.ps1`       | Looks for secrets in the files git does not ignore, with Semgrep           |
+| `tools/cover.py`              | The work behind `cover.ps1`, in Python. uv runs it                         |
 | `.semgrep/secrets.yml`        | The rules for the secrets of this repository: Ghost, Azure SAS, Azure PAT  |
+| `brand/README.md`             | The house style: what is taken from the theme, and how a picture is made   |
+| `brand/theme.json`            | The style as it was read from the theme the last time                      |
+| `brand/fonts`                 | Inter, the font of the titles of the site, with its licence                |
 
 ## When something does not work
 

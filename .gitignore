@@ -11,3 +11,6 @@ site.local.psd1
 # Editors and operating systems
 .DS_Store
 Thumbs.db
+
+# The covers next to each other, made again by ./cover.ps1 -Sheet
+/brand/contact-sheet.jpg

@@ -115,6 +115,12 @@ jobs:
           $package = ./tools/Get-ThemePackage.ps1 @download
           Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value "path=$($package.FullName)"
 
+      # The title of a post is on its cover. A cover that is behind on its post is made again here, from
+      # brand/theme.json. uv, which runs the tool, is there since the step that looks for secrets.
+      - name: Make the covers that are behind
+        continue-on-error: true
+        run: ./cover.ps1 -Refresh
+
       # The theme first, then the tags, the pages and the posts. With delete, a post, a page or a tag whose file a
       # push removed is removed from the site as well. A run by hand has no push to compare with, so it removes
       # only what was removed since the commit in base_ref. The daily run removes nothing.
