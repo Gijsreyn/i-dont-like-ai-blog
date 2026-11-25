@@ -1,0 +1,9 @@
+# What mlc, the link checker, leaves alone. ./lint.ps1 links runs it: see tools/lint/links.ps1, which also decides
+# which files it reads.
+
+# Milliseconds between two requests to the same site. The posts link to a few sites many times, and a site that
+# is asked too fast answers "too many requests", which looks like a broken link.
+throttle = 250
+
+# Addresses that are not checked, with * for anything. For a site that refuses a program but not a reader.
+ignore-links = []

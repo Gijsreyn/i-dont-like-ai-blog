@@ -23,7 +23,7 @@ git switch -c post/why-i-do-not-like-ai                     # 4. branch, commit,
 3. **Rehearse**, when you want to see a publish happen first: `./publish.ps1 -Local` does everything for real,
    but on the site on this machine.
 4. **Pull request.** The workflow `Check` loads the posts into a Ghost site on the runner. It touches nothing
-   else.
+   else. The workflow `Lint` runs the linters, see [Linters](#linters): `./lint.ps1` does the same here.
 5. **Go live.** Set `status: published` in the front matter and merge to `main`. The workflow `Publish` runs for
    that merge as a dry run, and its summary shows what would change on the live site. Then start the workflow by
    hand with `dry_run` cleared, which publishes. Merged as a draft, the post is created on the live site as a
@@ -196,6 +196,40 @@ site, every time it makes something. [brand/README.md](brand/README.md) says wha
   blog. The list view of a tag is narrower and still cuts the sides.
 - **It needs uv**, which `./preview.ps1` installs on its first run. uv brings Python and what the tool needs by
   itself, the first time from the internet. Nothing of this reaches a site.
+
+## Linters
+
+A linter reads the files of the repository and says what is wrong in them. `./lint.ps1` runs them, and the
+workflow `Lint` does that for every pull request, with a job for each linter.
+
+```powershell
+./lint.ps1            # every linter
+./lint.ps1 links      # one of them
+./lint.ps1 -Offline   # without the internet: a linter that has -Offline skips what needs it
+./lint.ps1 -List      # their names
+```
+
+| Linter  | What it looks for                                           | With            | Its settings |
+| ------- | ----------------------------------------------------------- | --------------- | ------------ |
+| `links` | A link to a file, a picture or an address that is not there | [mlc][lint-mlc] | `.mlc.toml`  |
+
+[lint-mlc]: https://github.com/becheran/mlc
+
+- **A linter is a file.** `tools/lint/links.ps1` is the linter `links`. To add one, add a script there with a
+  name in lower case letters, digits and hyphens, and a row to the table above. Nothing else changes:
+  `./lint.ps1` finds it, and the workflow makes its jobs from `./lint.ps1 -List`.
+- **It returns findings and shows nothing itself.** A finding is an object with `Severity` (`error` or
+  `warning`), `File`, `Line`, `Column` and `Message`. `./lint.ps1` shows them as lines, and in a workflow also
+  on the lines of the pull request and in the summary of the run. The help of `./lint.ps1` has the details.
+- **An error fails, a warning does not.** The job `All linters` of the workflow is the one check to require
+  for the branch `main`, whatever the linters are called.
+- **A linter brings its own tool.** `links` downloads mlc once, the version that is named in its script, and
+  only runs the file when its SHA-256 is the one the script expects.
+- **`links` asks the addresses it finds**, as a reader would, the live site among them. With `-Offline` it only
+  looks at the links to files and pictures, and asks nothing. An address that refuses a program is named in
+  `.mlc.toml`, with the reason.
+- **What `links` does not see:** whether a heading that a link points to, `#like-this`, is there. A reference
+  without its line, `[text][99]`, is a warning.
 
 ## The settings of the theme
 
@@ -411,6 +445,7 @@ them: `content_api_key` is another one on the site on this machine.
 | `site.local.psd1`             | Where the theme comes from, on this machine. Git ignores it                |
 | `set-secrets.ps1`             | Syncs the secrets of the workflow on GitHub with the values that are here  |
 | `cover.ps1`                   | A prompt for a picture and the cover of a post, in the style of the theme  |
+| `lint.ps1`                    | Runs the linters and shows what they found                                 |
 | `tools/Initialize-Site.ps1`   | Reads the settings and installs the module Ghost when it is missing        |
 | `tools/Get-SiteSecret.ps1`    | Finds a key of the live site: environment, vault, prompt                   |
 | `tools/Get-ThemePackage.ps1`  | Downloads the newest package of the theme from the feed                    |
@@ -418,6 +453,8 @@ them: `content_api_key` is another one on the site on this machine.
 | `tools/Save-ThemeSetting.ps1` | Writes the settings of the theme of a site to the two files                |
 | `tools/Test-Secret.ps1`       | Looks for secrets in the files git does not ignore, with Semgrep           |
 | `tools/cover.py`              | The work behind `cover.ps1`, in Python. uv runs it                         |
+| `tools/lint`                  | The linters, a script each. `links.ps1` looks for links that lead nowhere  |
+| `.mlc.toml`                   | What the linter `links` leaves alone                                       |
 | `.semgrep/secrets.yml`        | The rules for the secrets of this repository: Ghost, Azure SAS, Azure PAT  |
 | `brand/README.md`             | The house style: what is taken from the theme, and how a picture is made   |
 | `brand/theme.json`            | The style as it was read from the theme the last time                      |

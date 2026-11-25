@@ -1,0 +1,75 @@
+name: Lint
+
+# Runs the linters of the repository for a pull request: the checks that read its files and say what is wrong in
+# them, such as a link that leads nowhere.
+#
+# A linter is a script in tools/lint, and ./lint.ps1 runs it: ./lint.ps1 has the details. This workflow asks that
+# script which linters there are and makes a job for each, so a new linter is a new file and nothing changes
+# here. What a linter finds is shown on the lines of the pull request and in the summary of the run.
+#
+# It needs no secrets and changes nothing, so it also runs for a pull request from a fork.
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  list:
+    name: Find the linters
+    runs-on: ubuntu-latest
+    outputs:
+      names: ${{ steps.list.outputs.names }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@v7
+
+      # The names as a list in JSON, which the next job makes its jobs from: ["links"].
+      - name: List the linters
+        id: list
+        shell: pwsh
+        run: |
+          $names = ConvertTo-Json -InputObject @(./lint.ps1 -List) -Compress
+          Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value "names=$names"
+
+  lint:
+    name: ${{ matrix.name }}
+    needs: list
+    runs-on: ubuntu-latest
+    strategy:
+      # One linter that finds something does not stop the others.
+      fail-fast: false
+      matrix:
+        name: ${{ fromJSON(needs.list.outputs.names) }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@v7
+
+      # The name comes from a file of the pull request, so it reaches the script as a value and not as a part of
+      # the command.
+      - name: Run the linter
+        shell: pwsh
+        env:
+          LINTER: ${{ matrix.name }}
+        run: ./lint.ps1 $env:LINTER
+
+  # One check with one name, whatever the linters are called: the one to require for the branch main.
+  result:
+    name: All linters
+    if: always()
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: See that every linter passed
+        shell: pwsh
+        env:
+          RESULT: ${{ needs.lint.result }}
+        run: |
+          if ($env:RESULT -ne 'success') {
+              throw "Not every linter passed: $env:RESULT. See the jobs above."
+          }
