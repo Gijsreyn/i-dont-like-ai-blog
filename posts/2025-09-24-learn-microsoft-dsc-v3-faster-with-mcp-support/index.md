@@ -3,7 +3,7 @@ title: "Learn Microsoft DSC v3 faster with MCP support"
 status: published
 tags: ["AI", "Microsoft Desired State Configuration v3"]
 published_at: "2025-09-24T05:28:46.000Z"
-feature_image: "images/2025-09-Learn-Microsoft-DSC-v3-with-Model-Context-Protocol.png"
+feature_image: "images/cover.jpg"
 feature_image_alt: "Learn Microsoft DSC v3 with Model Context Protocol"
 ---
 

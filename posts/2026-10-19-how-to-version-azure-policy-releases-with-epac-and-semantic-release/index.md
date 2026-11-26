@@ -4,7 +4,7 @@ status: published
 tags: ["Azure", "Azure DevOps"]
 published_at: "2026-10-19T04:37:53.000Z"
 custom_excerpt: "Your commit messages already know the exact next version"
-feature_image: "images/2026-10-827YDhSNVQ-w7_um.png"
+feature_image: "images/cover.jpg"
 ---
 
 <p>For a good part of my current career, I supported the platform engineering members who manage the Azure cloud. However, I switched departments, and I'm not in that seat anymore on use cases that help the platform. Yet I keep coming back to some stuff. Stuff that is satisfying after you build a pipeline that does the boring work for you.</p><p>In my <a href="/how-to-lint-azure-policy-definitions-in-azure-devops-with-epac-and-azure-policy-linter/">previous post</a>, you built a pipeline that lints every Azure Policy definition with the Azure Policy Linter before Enterprise Policy as Code (EPAC) deploys it. It answered the question I was looking for: <em>Is this policy any good</em>?</p><p>But it left one open. Which version of your policies is running in production right now? And what might have changed since last Tuesday? Git history has the answer somewhere. Between commits called "Test", "Trigger," and "Update pipeline". Or does it?</p><p>I wanted to extend the pipeline with those questions answered. So, in this guide, if you want to follow along, you add <a href="https://semantic-release.gitbook.io/">semantic-release</a> to the pipeline. Every merge to <code>main</code> that adds or fixes a policy becomes a version number, a changelog entry, a Git tag, and an immutable package in Azure Artifacts. You never pick a version yourself.</p><p>In this article, you:</p><ul>

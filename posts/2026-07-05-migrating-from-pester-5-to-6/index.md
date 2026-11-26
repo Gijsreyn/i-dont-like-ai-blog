@@ -4,7 +4,7 @@ status: published
 tags: ["PowerShell"]
 published_at: "2026-07-05T07:19:08.000Z"
 custom_excerpt: "Learn how to easily migrate your test suite from v5 to v6"
-feature_image: "images/2026-07-kYQG8sVKiJaLQm-X.png"
+feature_image: "images/cover.jpg"
 ---
 
 <p>Recently, the Pester repository has seen a good amount of pull requests by the core maintainer. And after those PRs, 4 release candidates were created.</p><p>Whilst there isn't any official GA for v6 yet, the release candidates already give a glimpse of what is changing. Thus, in this article, we'll be looking at the already available release candidates and looking at how you can migrate from v5 to v6. </p><p>Don't worry if your test suite is on Pester 5. The core shapes still look familiar with the famous syntaxes like <code>Describe</code>, <code>Context</code>, <code>It</code>, and others.</p><h2 id="what-changed-in-pester-6">What changed in Pester 6?</h2><p>Pester 6 still builds on top of Pester's 5 runtime, but it focuses on three key improvement areas:</p><ul><li>A new family of <code>Should-*</code> assertions.</li><li>Faster code coverage, using profiler-based coverage by default.</li><li>An experimental parallel runner that runs test files concurrently.</li></ul><p>The good news is that classic Pester 5 assertions still work. You don't need to convert every <code>Should -Be</code> into <code>Should-Be</code> on day one. The new assertions look like the following (which makes migration much less risky):</p><pre><code class="language-powershell"># Pester 5 style: still works in Pester 6

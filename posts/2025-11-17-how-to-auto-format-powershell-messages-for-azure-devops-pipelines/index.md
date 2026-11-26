@@ -3,7 +3,7 @@ title: "How to auto-format PowerShell messages for Azure DevOps pipelines"
 status: published
 tags: ["Azure DevOps", "PowerShell"]
 published_at: "2025-11-17T03:55:05.000Z"
-feature_image: "images/2025-11-Your-paragraph-text--1-.png"
+feature_image: "images/cover.jpg"
 ---
 
 <p>If you've worked with Azure DevOps pipelines and PowerShell, you know you've to change that tiny <code>Write-*</code> command text to be wrapped correctly:</p><pre><code class="language-powershell">Write-Warning -Message "My message"&#10;

@@ -4,7 +4,7 @@ status: published
 tags: ["PowerShell", "Microsoft Desired State Configuration v3"]
 published_at: "2026-09-07T06:09:14.000Z"
 custom_excerpt: "PowerShell's imperative power and Microsoft DSC's declarative engine can finally meet in the middle"
-feature_image: "images/2026-09-i0nou1xng69kHzBp.png"
+feature_image: "images/cover.jpg"
 ---
 
 <p>You've just received the task to investigate the upgrade from PowerShell Desired State Configuration (PSDSC) to Microsoft DSC and are expected to still be able to use the <code>configuration</code> keyword. Bad luck, that doesn't work in Microsoft DSC anymore.</p><p>The configuration management landscape tool from Microsoft has moved on. MOF  never caught on outside DSC when you compiled the <code>configuration</code> block. The new DSC engine speaks JSON and YAML documents with a real expression language. That means no more <em>real </em>PowerShell loops or conditionals. So the old authoring power was left behind. If you want a v3 or above configuration document, you write it by hand mostly in YAML.</p><p>An RFC by Steve Lee, a detailed community review of it, and now a working prototype are exploring how to bring back that power. This blog post walks through the design, decision by decision, with the reasoning behind each one.</p><blockquote>

@@ -4,7 +4,7 @@ status: published
 tags: ["Bicep"]
 published_at: "2025-10-06T03:25:36.000Z"
 custom_excerpt: "Learn how you can use the JSON-RPC library to speed up your Bicep compile or any other operations"
-feature_image: "images/2025-10-getting-started-with-bicep-jsonrpc-library.png"
+feature_image: "images/cover.jpg"
 ---
 
 <p>The Bicep team shipped a new library to NuGet. It's called <code>Azure.Bicep.RpcClient</code>. </p><p>This library allows you to interact with Bicep without needing to use the command line. You write .NET code, and the library handles the rest. It's fast, clean, and it works.</p><p>But why does this library matter? Because the spawning processes are slow. Parsing console output is fragile, unless you use the <code>--stdout</code> or <code>--outfile</code> options. </p><p>This library changes that. You get direct access to Bicep's compiler through JSON-RPC. One connection, multiple operations, meaning less overhead. </p><p>Let me demonstrate its functionality in this blog post.</p><h2 id="what-is-json-rpc">What is JSON-RPC?</h2><p>JSON-RPC is a protocol. It sends messages between programs. And as you can already recognize, these messages are JSON. The protocol is quite simple. You send a request like:</p><pre><code class="language-json">{

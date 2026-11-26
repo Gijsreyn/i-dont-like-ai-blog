@@ -9,15 +9,16 @@ name: Publish
 #      creates and updates the tags, the pages and the posts whose file differs from the site. After a push it
 #      also removes the ones whose file that push removed. What was made in Ghost Admin has no file here and is
 #      left alone.
-#   3. ./publish.ps1 -SettingsOnly sends the settings of the theme, when there is a staff access token.
+#   3. ./publish.ps1 -SettingsOnly sends the settings of the theme, and the routes of the theme from the
+#      routes.yaml in its package when the site has other ones. Both take a staff access token.
 #
 # It runs for every change to main, once a day to pick up a new package of the theme, and by hand.
 #
 # Secrets of the repository (Settings > Secrets and variables > Actions):
 #
 #   GHOST_LIVE_ADMIN_API_KEY    the Admin API key of a custom integration of the live site
-#   GHOST_LIVE_STAFF_ACCESS_TOKEN  optional: a staff access token, to also send the settings of the theme.
-#                               It may do everything its owner may do. Without it those settings are left alone.
+#   GHOST_LIVE_STAFF_ACCESS_TOKEN  optional: a staff access token, to also send the settings of the theme and
+#                               its routes. It may do everything its owner may do. Without it those are left alone.
 #   AZURE_DEVOPS_EXT_PAT        a personal access token of Azure DevOps with the scope Packaging (Read)
 #   AZURE_DEVOPS_ORGANIZATION   the address of the organization, such as https://dev.azure.com/my-org
 #   AZURE_DEVOPS_PROJECT        the project of the feed
@@ -139,8 +140,17 @@ jobs:
           dry-run: ${{ env.DRY_RUN }}
           module-version: 0.8.0
 
-      # The action does not send the settings of the theme. Ghost only lets an owner or an administrator change
-      # them, which takes the staff access token. They go last, when the theme they belong to is on the site.
-      - name: Send the settings of the theme
+      # The action does not send the settings of the theme, nor its routes, which Ghost keeps apart from a theme.
+      # Ghost only lets an owner or an administrator change them, which takes the staff access token. They go
+      # last, when the theme they belong to is on the site. The routes are read from the package that was
+      # downloaded above: without a package they are left as they are.
+      - name: Send the settings and the routes of the theme
         if: env.GHOST_LIVE_STAFF_ACCESS_TOKEN != ''
-        run: ./publish.ps1 -SettingsOnly -WhatIf:($env:DRY_RUN -eq 'true') -Confirm:$false
+        env:
+          THEME_PACKAGE: ${{ steps.theme.outputs.path }}
+        run: |
+          $arguments = @{ SettingsOnly = $true; WhatIf = ($env:DRY_RUN -eq 'true'); Confirm = $false }
+          if ($env:THEME_PACKAGE) {
+              $arguments['ThemePackage'] = $env:THEME_PACKAGE
+          }
+          ./publish.ps1 @arguments

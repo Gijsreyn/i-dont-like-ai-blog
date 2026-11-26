@@ -8,15 +8,23 @@
 
     1. A prompt (-Prompt). Say what the picture shows, and get the text for an image generator with the style of
        the site around it. It is also put on the clipboard. This is how every picture starts.
-    2. A cover (-Post). The title of the post, set as on the site, next to the picture. Without a picture the
-       cover has the sign of the site in its place. Written as images/cover.jpg in the folder of
-       the post; the picture is kept next to it as images/cover-art.jpg.
+    2. A cover (-Post). The title of the post, set as on the site, next to the picture. A long title goes across
+       the top instead, with the picture below it. Without a picture the cover has the sign of the site in its
+       place. Written as images/cover.jpg in the folder of the post; the picture is kept next to it as
+       images/cover-art.jpg.
     3. The covers that are behind (-Refresh): one that is missing, or whose title, picture or theme changed since
        it was made. A cover that is still right is not touched. new-post.ps1 makes the first cover of a
        post, and preview.ps1 and publish.ps1 do this before they send the posts, so there is seldom a reason to
        run it by hand. -All makes every cover again, whether it is behind or not.
     4. A picture for inside the post (-Picture): brought to the width of the site and made light.
     5. A check (-Check) and a contact sheet (-Sheet) of all covers, in brand/contact-sheet.jpg.
+    6. The posts from before the house style (-Adopt): the ones with a cover of their own, all at once. The first
+       run writes a plan, brand/adopt.csv, with a row for every such post and what would be done with its cover:
+       the picture it has next to the title, the title alone, or nothing. Change the plan where it is wrong. With
+       -WhatIf the covers are made and shown on the contact sheet, and no post is touched. Without it the script
+       asks once, and then every post of the plan gets its cover, and its front matter points to it. A post that
+       was done is passed over, so it can be run again. A post with a template of its own, such as a lesson of a
+       course, is never in the plan.
 
     The theme is the folder ThemePath of site.local.psd1, or -ThemePath. Without it the style is taken from
     brand/theme.json, which holds what was read from the theme the last time.
@@ -50,6 +58,14 @@
     ./cover.ps1 -Refresh -WhatIf
 
     Only says which covers would be made again.
+
+.EXAMPLE
+    ./cover.ps1 -Adopt
+    ./cover.ps1 -Adopt -WhatIf -Open
+    ./cover.ps1 -Adopt
+
+    The posts from before the house style, in three steps: write the plan, look at the covers it would give
+    without changing a post, and do it.
 
 .EXAMPLE
     ./cover.ps1 -Prompt 'three servers that share one clock' -Wide
@@ -98,6 +114,11 @@ param(
     [ValidatePattern('\.(jpg|jpeg|png|webp)$')]
     [string] $Name,
 
+    # Give the posts that have a cover of their own the house style, as brand/adopt.csv says. The first run
+    # writes that plan and changes nothing else.
+    [Parameter(Mandatory, ParameterSetName = 'Adopt')]
+    [switch] $Adopt,
+
     # Check the covers of every post and page.
     [Parameter(Mandatory, ParameterSetName = 'Check')]
     [switch] $Check,
@@ -113,6 +134,7 @@ param(
     [Parameter(ParameterSetName = 'Cover')]
     [Parameter(ParameterSetName = 'Picture')]
     [Parameter(ParameterSetName = 'Sheet')]
+    [Parameter(ParameterSetName = 'Adopt')]
     [switch] $Open
 )
 
@@ -140,6 +162,7 @@ if ($PSCmdlet.ParameterSetName -eq 'Routine') {
         '  changed. Commit images/cover.jpg and images/cover-art.jpg with the post.'
         ''
         '  Get-Help ./cover.ps1 -Examples shows more, and ./cover.ps1 -Check and -Sheet look at all covers.'
+        '  ./cover.ps1 -Adopt gives the posts from before the house style their cover, all at once.'
     ) | ForEach-Object -Process { Write-Information -MessageData $_ }
     return
 }
@@ -243,6 +266,41 @@ if ($Sheet) {
             Invoke-Item -LiteralPath $output
         }
     }
+    return
+}
+
+if ($Adopt) {
+    $plan = Join-Path -Path $PSScriptRoot -ChildPath 'brand/adopt.csv'
+    $sheetFile = Join-Path -Path $PSScriptRoot -ChildPath 'brand/contact-sheet.jpg'
+    $arguments = @('adopt', $postsPath, '--plan', $plan, '--sheet', $sheetFile)
+    $failure = 'Not every post could be given its cover, see above.'
+
+    # The first run only writes the plan, with or without -WhatIf.
+    if (-not (Test-Path -LiteralPath $plan)) {
+        Show-CoverTool -Arguments $arguments -Failure $failure
+        if ($Open) {
+            Invoke-Item -LiteralPath $plan
+        }
+        return
+    }
+
+    # In a dry run the tool is still asked: it makes the covers, puts them on the contact sheet and leaves the
+    # posts alone.
+    if (-not $PSCmdlet.ShouldProcess($postsPath, "Give the posts of $plan a cover in the house style")) {
+        $arguments += '--dry-run'
+        Show-CoverTool -Arguments $arguments -Failure $failure
+        if ($Open -and (Test-Path -LiteralPath $sheetFile)) {
+            Invoke-Item -LiteralPath $sheetFile
+        }
+        return
+    }
+
+    # This changes many posts at once, so it asks first, whatever the session is set to.
+    $question = "Give every post in $plan that is not skipped its cover, and point its front matter to it?"
+    if (-not $PSCmdlet.ShouldContinue($question, 'The posts from before the house style')) {
+        return
+    }
+    Show-CoverTool -Arguments $arguments -Failure $failure
     return
 }
 

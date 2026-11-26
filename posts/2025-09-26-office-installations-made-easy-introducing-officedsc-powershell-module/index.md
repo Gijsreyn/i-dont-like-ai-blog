@@ -4,7 +4,7 @@ status: published
 tags: ["PowerShell", "Microsoft Desired State Configuration v3"]
 published_at: "2025-09-26T03:38:31.000Z"
 custom_excerpt: "Learn how you can easily automate Office installations using PowerShell DSC"
-feature_image: "images/2025-09-Introducing-OfficeDsc-PowerShell-module--1--1.png"
+feature_image: "images/cover.jpg"
 feature_image_alt: "Introducing OfficeDsc PowerShell module"
 ---
 

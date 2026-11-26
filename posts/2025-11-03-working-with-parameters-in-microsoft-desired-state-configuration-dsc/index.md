@@ -4,7 +4,7 @@ status: published
 tags: ["Microsoft Desired State Configuration v3"]
 published_at: "2025-11-03T04:57:24.000Z"
 custom_excerpt: "Learn how to leverage parameters in Microsoft DSC configuration documents"
-feature_image: "images/2025-11-featureimage.png"
+feature_image: "images/cover.jpg"
 ---
 
 <p>If you worked with PowerShell Desired State Configuration (PSDSC), <em>you know the pain</em>.</p><p>Managing parameters was a nightmare. You wrote a configuration. You compiled it into an MOF file. You deployed that MOF. Then you needed different parameters for staging. So you compiled again. Then production needed different values. You compiled a third time.</p><p>Every parameter change meant recompiling. Every environment needed its own MOF file. Every deployment required managing and distributing these files across your infrastructure.</p><p>It was <em>exhausting</em>.</p><p>Microsoft Desired State Configuration (DSC) changes everything.</p><p>Parameters are processed at runtime. One configuration file. Multiple environments. No compilation. No MOF files. No distribution headache.</p><p>You define your configuration once. You run it with different parameters. That's it.</p><p>This article shows you how, starting with a comparison of PSDSC versus Microsoft DSC.</p><h2 id="comparing-parameters">Comparing parameters</h2><p>Before you look at how you can work with parameters in Microsoft DSC, let's see both scenarios in both systems using a real-world example: deploying a web server configuration to production with environment-specific parameters.</p><p>In a compilation workflow using PSDSC, the following configuration document illustrates what happens:</p><pre><code class="language-powershell"># Step 1: Define the configuration script

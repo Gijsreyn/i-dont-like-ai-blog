@@ -21,6 +21,12 @@ picture is kept next to it as `images/cover-art.jpg`, so the cover can be made a
 A post without a picture has a cover too: the sign of the site stands where the picture would. The generator is
 asked for a picture without any text, because it cannot spell: the title is set here, in the font of the site.
 
+The title decides the shape of the cover. One that fits next to the picture, in five lines and without getting
+small, stands on the left with the picture on its right. A long one goes across the top over the whole width,
+with the picture as a wide card below it: of a square picture that shows the middle band. The title is always
+straight, and the name of the site is always in the bottom left corner. The sizes are at the top of
+`tools/cover.py`.
+
 ## What happens by itself
 
 Only the picture needs me. The rest follows the post:
@@ -46,6 +52,33 @@ The workflow `Publish` sends the covers as they are in the repository, so commit
 cover that is behind on its post is made again by the step `Make the covers that are behind`, before the step
 `Deploy to Ghost`: a title that was changed on GitHub then still gets its cover. It is made on the runner and
 not in the repository: `./preview.ps1` makes the file here again.
+
+## The posts from before the house style
+
+A post that was written before all this has a cover of its own. `./cover.ps1 -Adopt` gives those posts the house
+style, all at once and in three steps:
+
+```powershell
+./cover.ps1 -Adopt                 # 1. writes the plan, brand/adopt.csv, and changes nothing else
+./cover.ps1 -Adopt -WhatIf -Open   # 2. makes the covers of the plan and shows them. No post is touched
+./cover.ps1 -Adopt                 # 3. asks once, and does it
+```
+
+The plan has a row for every such post. `Do` says what happens to its cover:
+
+| Do        | The new cover                                                                           |
+| --------- | --------------------------------------------------------------------------------------- |
+| `picture` | The picture the post has now, cut to a square, next to the title. `Focus` moves the cut |
+| `title`   | The title alone. For a picture with words in it, which would say the title twice        |
+| `skip`    | None: the post is left as it is                                                         |
+
+- A post with a template of its own, such as a lesson of a course, is not in the plan: the theme shows it in
+  another way.
+- Step 3 writes `images/cover.jpg`, and `images/cover-art.jpg` for `picture`, and changes one line of the front
+  matter: `feature_image`. The picture the post had stays in its folder, and `feature_image_alt` stays as it is.
+- A post that was done is passed over, so the plan can be changed and step 3 run again for the rest. To go back,
+  `git restore posts` and remove the new files.
+- The plan is made once and git ignores it. Remove it to have it written again.
 
 ## What is taken from the theme
 

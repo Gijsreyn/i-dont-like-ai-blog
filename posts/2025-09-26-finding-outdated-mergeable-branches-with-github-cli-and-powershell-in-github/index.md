@@ -5,7 +5,7 @@ featured: true
 tags: ["PowerShell"]
 published_at: "2025-09-26T11:53:50.000Z"
 custom_excerpt: "Discover a quick method to easily retrieve outdated mergeable branches from your open pull requests"
-feature_image: "images/2025-09-GitHub-CLI-and-PowerShell.png"
+feature_image: "images/cover.jpg"
 feature_image_alt: "GitHub CLI and PowerShell"
 ---
 

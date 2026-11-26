@@ -5,7 +5,7 @@ featured: true
 tags: ["Documentation"]
 published_at: "2025-09-19T08:54:30.000Z"
 custom_excerpt: "Learn to use Pester and PowerShell for freshness"
-feature_image: "images/2025-09-ChatGPT-Image-Sep-19--2025--10_51_30-AM.png"
+feature_image: "images/cover.jpg"
 feature_image_alt: "Keep your docs relevant and up to date with simple PowerShell-driven freshness checks"
 feature_image_caption: "<span style=\"white-space: pre-wrap;\">Keep your docs relevant and up to date with simple PowerShell-driven freshness checks.</span>"
 ---

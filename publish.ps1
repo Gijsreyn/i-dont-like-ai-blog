@@ -8,7 +8,8 @@
     1. The theme. The newest package of the theme is taken from Azure Artifacts, where the pipeline of the theme
        publishes it, and uploaded and activated when the live site shows another theme than that one. A post never
        needs a template that the site does not have yet, because the theme goes first.
-    2. The settings of the theme, from theme-settings.psd1, when they differ. Ghost only allows that with a
+    2. The settings of the theme, from theme-settings.psd1, when they differ, and the routes of the theme, from
+       the routes.yaml in its package, when the site has other ones. Ghost only allows both with a
        staff access token: without GHOST_LIVE_STAFF_ACCESS_TOKEN they are left as they are on the site.
     3. The tags. A tag is created or updated for every file in the folder tags that differs from the tag on the
        site.
@@ -62,6 +63,11 @@
 
     Sends the settings of the theme that differ and nothing else, without asking. The workflow Publish does this
     after its action has brought the theme, the tags, the pages and the posts up to date.
+
+.EXAMPLE
+    ./publish.ps1 -SettingsOnly -ThemePackage ./i-dont-like-ai.zip -Confirm:$false
+
+    The same, and the routes of that package too, when the site has other ones.
 #>
 [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
 param(
@@ -75,7 +81,7 @@ param(
     [switch] $SkipPosts,
 
     # Send the settings of the theme and nothing else. The theme itself, the tags, the pages and the posts are
-    # left as they are.
+    # left as they are. With -ThemePackage the routes of that package are sent too.
     [switch] $SettingsOnly,
 
     # Publish to the site on this machine instead of the live site.
@@ -94,6 +100,10 @@ $dryRun = [bool] $WhatIfPreference
 
 # Before -SkipTheme is set for a theme that is linked into the local site: its settings are still sent.
 $applySettings = -not $SkipTheme
+
+# Where the routes of the theme are read from: the package, or the folder of a theme that is linked into the
+# local site.
+$routesSource = $ThemePackage
 
 # The settings alone. Whoever asks for that has taken care of the rest, as the workflow Publish does.
 if ($SettingsOnly) {
@@ -123,6 +133,9 @@ if ($Local) {
         $reason = 'The local site shows the theme straight from its folder'
         Write-Information -MessageData "${reason}: there is no theme to send."
         $SkipTheme = $true
+        if (-not $routesSource) {
+            $routesSource = $linked
+        }
     }
 }
 else {
@@ -177,6 +190,7 @@ try {
                 }
                 $tool = Join-Path -Path $PSScriptRoot -ChildPath 'tools/Get-ThemePackage.ps1'
                 $ThemePackage = (& $tool @download).FullName
+                $routesSource = $ThemePackage
             }
             else {
                 $missing = 'No theme package and no feed to take one from'
@@ -242,6 +256,24 @@ try {
     if (-not $SkipPosts) {
         $posts = Sync-GhostPost -Path $site.PostsPath -Recurse -WhatIf:$dryRun -Confirm:$false
         $posts | Format-Table -Property Action, Status, Slug, Url -AutoSize
+    }
+
+    # 6. The routes of the theme, from the routes.yaml in its package. Ghost keeps them apart from the theme, so
+    # the upload of a theme does not bring them. They go last: a route can show a page, and that page is there
+    # now. As the settings of the theme they take the staff access token, and -SkipTheme leaves them alone.
+    if ($applySettings -and $routesSource) {
+        if ($staffKey) {
+            $tool = Join-Path -Path $PSScriptRoot -ChildPath 'tools/Set-SiteRoute.ps1'
+            $routes = & $tool -Url $address -StaffAccessToken $staffKey -ThemePackage $routesSource -WhatIf:$dryRun
+            $routes | Format-Table -Property Action, Url -AutoSize
+        }
+        else {
+            $why = 'that takes a staff access token, in GHOST_LIVE_STAFF_ACCESS_TOKEN or in your vault'
+            Write-Information -MessageData "The routes of the site are left as they are: $why."
+        }
+    }
+    elseif ($applySettings) {
+        Write-Information -MessageData 'The routes of the site are left as they are: there is no package of the theme to read them from.'
     }
 }
 finally {

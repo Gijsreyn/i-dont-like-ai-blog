@@ -3,7 +3,7 @@ title: "Azure Bicep Updates — March 2026 Edition"
 status: published
 tags: ["Bicep", "Azure"]
 published_at: "2026-03-06T10:02:23.000Z"
-feature_image: "images/2026-03-cb0d1761-684b-4187-a782-633618af59ca.png"
+feature_image: "images/cover.jpg"
 ---
 
 <p>It’s been a while since I last published an Azure Bicep updates edition. But both the Bicep team and community certainly haven't been standing still. In this edition, we're going to catch up with two releases (v0.41.2 and v0.40.2) by looking at some of their highlights:</p><ul><li>The <code>bicep snapshot</code> command</li><li>New experimental decorators and functions</li><li>Added namespace functions </li><li>Multi-line interpolated strings</li><li>And more..</li></ul><p>Hold on to this one. This blog post is going to be a big one!</p><h2 id="bicep-snapshot-command">Bicep snapshot command</h2><p>The <code>bicep snapshot</code> command started to surface in v0.36.2 as an experimental feature. Now, in v0.41.2, the command reached GA status. In short, this command allows you to generate a "normalized" snapshot of the resource defined in a Bicep file. The snapshot can then be stored in a file and used to visually compare changes between deployments.</p><p>This makes it easier to review how your infrastructure evolves over time, but also to better understand how expressions are evaluated in more complex deployments. Let's take a look at how this works in practice. Imagine you have the following Bicep file:</p><pre><code class="language-bicep">param location string&#10;

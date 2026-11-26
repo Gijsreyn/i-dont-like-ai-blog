@@ -4,7 +4,7 @@ status: published
 tags: ["Databricks", "Azure"]
 published_at: "2025-12-12T03:42:47.000Z"
 custom_excerpt: "Learn how to use the lookup function and mutators"
-feature_image: "images/2025-12-feature-image-4.png"
+feature_image: "images/cover.jpg"
 ---
 
 <p>Have you seen the following symptom: developers export jobs from the Databricks graphical user interface (GUI), only to find out later that they have to modify them when they reach production?</p><p>I've seen it and experienced it. From a platform engineering perspective, managing a Databricks instance with many clusters can be painful.</p><p>But with the launch of Python Databricks Asset Bundles (DABs), now in General Availability (GA) status, you gain more control. Control that has minimal impact on developers' exported job workflows. It also lets you avoid over-privileging either personal or non-personal accounts when leveraging the policy definitions you've created.</p><p>Let me show you how.</p><h2 id="prerequisites">Prerequisites</h2><p>Before you start your journey, there are three prerequisites:</p><ul><li>Databricks CLI v0.275.0 or above.</li><li>A Databricks instance.</li><li>Uv v0.9.17 or above.</li></ul><p>When these are in place, you're good to go.</p><h2 id="understanding-the-problem">Understanding the problem</h2><p>Often, developers create job workflows through the GUI. They receive YAML containing raw resource IDs. This works when they're testing in environments like development or test. But when they deploy it through DABs in production, these resource IDs wouldn't exist.</p><pre><code class="language-yaml">job_clusters:

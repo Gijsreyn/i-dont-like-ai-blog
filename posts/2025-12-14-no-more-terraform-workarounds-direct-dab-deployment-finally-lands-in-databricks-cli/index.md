@@ -4,7 +4,7 @@ status: published
 tags: ["Databricks"]
 published_at: "2025-12-14T07:20:21.000Z"
 custom_excerpt: "No more Terraform provider for DAB deployments"
-feature_image: "images/2025-12-c8bd98ad-c3f4-4a10-bb8c-d5cac47217f6.png"
+feature_image: "images/cover.jpg"
 ---
 
 <p>I’ve watched this <a href="https://github.com/databricks/cli/issues/1238" rel="noopener">issue</a> for a while: Each step requires internet access to Terraform's registry, allowing for failure points in locked-down environments, since 2024. I have commented on it, and I've used the workaround. It's a nasty workaround every single day, and explaining the error messages to my colleagues is a burden:</p><pre><code class="language-plaintext">Error: Failed to query available provider packages

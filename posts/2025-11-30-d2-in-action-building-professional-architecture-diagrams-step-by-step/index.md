@@ -4,7 +4,7 @@ status: published
 tags: ["Azure", "Azure DevOps"]
 published_at: "2025-11-30T07:17:16.000Z"
 custom_excerpt: "Learn how to easily create architectural diagrams with D2"
-feature_image: "images/2025-11-86c16335-a3d4-431f-887a-cf28cde94274.png"
+feature_image: "images/cover.jpg"
 ---
 
 <p>A reader asked me in my <a href="/how-to-fix-your-outdated-azure-diagrams-forever/">previous article</a>: "What does that D2 code actually produce?"</p><p>Fair question. I showed the syntax. Explained the benefits. But never showcased through how a diagram comes together piece by piece with images.</p><p>Let's fix that.</p><p>Today, we're going to build a complete architecture diagram for Azure DevOps Managed Pools from scratch. Each section adds one concept. By the end, you'll have a professional diagram and understand precisely how every line of D2 contributes to it.</p><h2 id="what-were-building">What we're building</h2><p>Azure DevOps Managed Pools is Microsoft's managed build agent solution. No more maintaining VMs or patch agent software. You define a pool, and Azure handles the rest.</p><p>The diagram will show:</p><ul><li>The Azure DevOps organization structure.</li><li>Managed Pool configuration.</li><li>Agent provisioning flow.</li><li>Connection to Azure resources.</li></ul><p>If you want to follow along, make sure you have D2 installed on your local machine. If you've installed D2, let's start with the basics.</p><h2 id="step-1-defining-shapes">Step 1: Defining shapes</h2><p>Every D2 diagram starts with shapes. These are your building blocks. It includes boxes, cylinders, and clouds that represent the components of your architecture.</p><p>The syntax is simple. Just name it:</p><pre><code class="language-d2">azdo: Azure DevOps

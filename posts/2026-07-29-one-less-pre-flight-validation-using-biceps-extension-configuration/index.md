@@ -4,7 +4,7 @@ status: published
 tags: ["Bicep"]
 published_at: "2026-07-29T08:28:44.000Z"
 custom_excerpt: "One step less to perform in your deployment pipeline"
-feature_image: "images/2026-07-Zh9th1fsNSBAcm1D.png"
+feature_image: "images/cover.jpg"
 ---
 
 <p>Every platform team that delivers Azure subscriptions to teams encounters the reported issue at least once in their lifetime:</p><pre><code class="language-plaintext">Code: MissingSubscriptionRegistration

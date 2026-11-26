@@ -4,7 +4,7 @@ status: published
 tags: ["Azure", "Azure DevOps", ".NET"]
 published_at: "2026-11-12T06:33:12.000Z"
 custom_excerpt: "One readable page per policy kept current by your pipeline"
-feature_image: "images/2026-11-DZoyzdI0V1T506go.jpg"
+feature_image: "images/cover.jpg"
 ---
 
 <p>When a deployment is denied, the team opens the policy to find out why. What they find is a <code>policyRule</code> full of nested <code>allOf</code> and <code>count</code> blocks. For the policy engine, that's the documentation. For them, it isn't. They want to know which effect applies, which parameter changes it, and what the policy looks at.</p>

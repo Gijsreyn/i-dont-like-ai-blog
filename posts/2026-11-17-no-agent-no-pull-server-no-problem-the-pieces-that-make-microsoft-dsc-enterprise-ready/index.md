@@ -4,7 +4,7 @@ status: published
 tags: ["Microsoft Desired State Configuration v3"]
 published_at: "2026-11-17T03:44:40.000Z"
 custom_excerpt: "Not yet, but the missing pieces now have issue numbers and pull requests"
-feature_image: "images/2026-11-JERH6piXHwXD5lxp.png"
+feature_image: "images/cover.jpg"
 ---
 
 <p>In August 2024 I left <a href="https://github.com/PowerShell/DSC/issues/92#issuecomment-2282719425">a comment</a> on a proposal in the Microsoft DSC repository and called it a "brain dump". The proposal was a year old by then. It described a place to publish and fetch configurations and resources, which PowerShell DSC had from the start and Microsoft DSC still doesn't.</p>

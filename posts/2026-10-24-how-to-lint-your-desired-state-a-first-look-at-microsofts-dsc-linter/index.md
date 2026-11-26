@@ -4,7 +4,7 @@ status: published
 tags: ["Microsoft Desired State Configuration v3"]
 published_at: "2026-10-24T10:49:48.000Z"
 custom_excerpt: "Lint your desired state before you set it"
-feature_image: "images/2026-10-WAONvPdX8CRYeqfG.png"
+feature_image: "images/cover.jpg"
 ---
 
 <p>I've lost count of how many times a configuration failed on me for a reason I could have spotted by reading it. I only found it out when I ran it through DSC's engine.</p><p>When I worked with PowerShell DSC, compiling the configuration to a MOF file caught some of these mistakes for me. But Microsoft DSC doesn't have a compile step. You write YAML or JSON and give it to the engine. Simpler, yet it removed the one moment where something read your configuration before it does something to your machine.</p><p>I tried to bring that moment back. There's an official branch where you can use the new <code>dsclint</code> executable, which lints configuration documents. In this post, you'll look at how linting works in PowerShell DSC today, what Microsoft DSC gives you without a linter, and what <code>dsclint</code> adds.</p><blockquote>

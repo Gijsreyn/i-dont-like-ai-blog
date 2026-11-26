@@ -5,7 +5,7 @@ featured: true
 tags: ["Bicep", ".NET"]
 published_at: "2025-10-02T03:29:13.000Z"
 custom_excerpt: "Learn how you can generate documentation from your model's source code"
-feature_image: "images/2025-09-behind-the-scenes-bicep-localdeploy.png"
+feature_image: "images/cover.jpg"
 feature_image_alt: "Behind the scenes of Bicep.LocalDeploy"
 ---
 

@@ -4,7 +4,7 @@ status: published
 tags: ["Azure", "Bicep"]
 published_at: "2025-11-21T04:38:03.000Z"
 custom_excerpt: "Learn how to prevent common deployment failures from immutable property changes"
-feature_image: "images/2025-11-7262e91c-4a25-4c78-b883-e027261840b6.png"
+feature_image: "images/cover.jpg"
 ---
 
 <p>Often you face challenges when deploying Azure resources against existing one: templates behave differently for new resources versus existing ones.</p><p>Some properties can only be set during creation, whilst others should be preserved during updates. You can't always know which scenario will happen until runtime. The <code>this</code> namespace solves this problem by enabling runtime checks and conditional logic based on the resource's existence.</p><p>In this guide, you will:</p><ul><li>Use <code>this.exists()</code> to determine if a resource already exists at deployment time.</li><li>Access existing resource properties with <code>this.existingResource()</code>.</li><li>Set different values for new resources versus updates.</li><li>Enable the experimental <code>this</code> namespace feature in your Bicep environment.</li></ul><h2 id="prerequisites">Prerequisites</h2><p>Before you dive in, you need to have:</p><ul><li>Bicep CLI nightly build installed.</li><li>A <code>bicepconfig.json</code> file in your project.</li></ul><p>To install the nightly CLI build, you can use:</p><pre><code class="language-powershell">iex "&amp; { $(irm https://aka.ms/bicep/nightly-cli.ps1) }"</code></pre><p>You can enable the experimental feature by creating or updating your <code>bicepconfig.json</code> file in your project root:</p><pre><code class="language-json">{

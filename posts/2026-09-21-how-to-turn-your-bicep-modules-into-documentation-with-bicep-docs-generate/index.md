@@ -4,7 +4,7 @@ status: published
 tags: ["Bicep", "Azure"]
 published_at: "2026-09-21T03:28:12.000Z"
 custom_excerpt: "Turn Bicep modules into Markdown documentation with the experimental docs generate command and customizable Scriban templates."
-feature_image: "images/2026-09-iAJH4UqB0hUkfDmM.jpg"
+feature_image: "images/cover.jpg"
 ---
 
 <p>Changing a Bicep parameter takes seconds. Remembering every place that parameter appears in your README is another story.</p>

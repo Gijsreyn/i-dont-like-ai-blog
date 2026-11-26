@@ -4,7 +4,7 @@ status: published
 tags: ["Azure DevOps", "Databricks"]
 published_at: "2025-09-30T05:23:54.000Z"
 custom_excerpt: "Learn how you can privately install Python packages on your Databricks clusters"
-feature_image: "images/2025-09-install-databricks-private-package.png"
+feature_image: "images/cover.jpg"
 feature_image_alt: "Privately install Python packages on Databricks"
 ---
 

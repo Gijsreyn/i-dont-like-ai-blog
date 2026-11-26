@@ -158,7 +158,8 @@ that have its tag. Such a route answers "not found" on a site that does not have
 pages are here: `./preview.ps1` and `./publish.ps1` create or update them, after the tags and before the posts.
 
 A new book or course needs three things: its page here, its route in the `routes.yaml` of the theme, and for a
-course the tag that its lessons carry.
+course the tag that its lessons carry. The route reaches the live site with the theme: see
+[What a publish does](#what-a-publish-does).
 
 ## Pictures and the house style
 
@@ -172,16 +173,24 @@ site, every time it makes something. [brand/README.md](brand/README.md) says wha
 ./cover.ps1 -Refresh                                        # the covers that are behind on their post or the theme
 ./cover.ps1 -Check                                          # every cover against the rules
 ./cover.ps1 -Sheet -Open                                    # all covers side by side
+./cover.ps1 -Adopt                                          # the posts from before the house style, all at once
 ./cover.ps1                                                 # the routine in a few lines, for when it is a while ago
 ```
 
 - **A cover has the title on it**, with the name of the site, set in the font of the site. The image
   generator is asked for a picture without text. A post without a picture has a cover too.
+- **The title decides the shape.** One that fits stands on the left, with the picture on its right. A long one
+  goes across the top, with the picture as a wide card below it.
 - **Only the picture is done by hand.** `./new-post.ps1` gives a post its first cover and the line
   `feature_image: images/cover.jpg`. `./preview.ps1` and `./publish.ps1` run `./cover.ps1 -Refresh` before they
   send the posts: a cover whose title, picture or theme changed is made again, and one that is still right
   is not touched. A cover that cannot be made is a warning and does not stop them.
 - **The post decides whether it takes part.** A post with another `feature_image`, or with none, is left alone.
+- **`./cover.ps1 -Adopt` is for the posts from before the house style.** Its first run writes a plan,
+  `brand/adopt.csv`, which git ignores: a row for every post with a cover of its own, and whether its picture
+  goes on the new cover or the title stands alone. With `-WhatIf` it shows the covers and touches no post.
+  Without it, it asks, and changes many posts at once: an agent does not answer that question for the author.
+  A post with a template of its own, such as a lesson, is never in the plan. `brand/README.md` has the steps.
 - **Two files in the folder `images`.** `cover.jpg` is the cover, which `feature_image` points to.
   `cover-art.jpg` is the picture inside it, kept so that the cover can be made again.
 - **The workflow `Publish` sends the covers as they are in the repository**, so a cover that was made again is
@@ -375,12 +384,17 @@ theme does not have them. The workflow `Check` runs that way.
 3. **The tags** whose file differs from the tag on the site.
 4. **The pages** whose file differs from the page on the site.
 5. **The posts** whose file differs from the post on the site.
+6. **The routes of the theme**, when the site has other ones and there is a staff access token. Ghost keeps the
+   routes of a site apart from its theme, so a theme that is uploaded does not bring them. The package of the
+   theme holds its `routes.yaml`, and `tools/Set-SiteRoute.ps1` gives the site those routes: the ones the theme
+   was made and tested with. Without the token, or with a package from before the theme packed the file, the
+   routes are left as they are and the run says so.
 
 The workflow does not run `publish.ps1` for all of that. It downloads the package of the theme with
 `tools/Get-ThemePackage.ps1` and hands it to the action
 [ghost-deploy-action](https://github.com/Gijsreyn/ghost-deploy-action). The action does the theme, the tags, the
 pages and the posts, with the same commands of the module Ghost. `./publish.ps1 -SettingsOnly` then sends the
-settings of the theme, which go last there. The summary of a run lists what was created, updated and removed.
+settings of the theme and its routes, which go last there. The summary of a run lists what was created, updated and removed.
 
 Two things are different in the workflow:
 
@@ -502,6 +516,7 @@ them: `content_api_key` is another one on the site on this machine.
 | `tools/Get-SiteSecret.ps1`    | Finds a key of the live site: environment, vault, prompt                   |
 | `tools/Get-ThemePackage.ps1`  | Downloads the newest package of the theme from the feed                    |
 | `tools/Set-ThemeSetting.ps1`  | Sends the settings of the theme in the two files to a site                 |
+| `tools/Set-SiteRoute.ps1`     | Gives a site the routes of the package of the theme, when they differ      |
 | `tools/Save-ThemeSetting.ps1` | Writes the settings of the theme of a site to the two files                |
 | `tools/Set-RelativeLink.ps1`  | Takes the address of the site out of the links to its own pages            |
 | `tools/Test-Secret.ps1`       | Looks for secrets in the files git does not ignore, with Semgrep           |

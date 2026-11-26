@@ -4,7 +4,7 @@ status: published
 tags: ["PowerShell"]
 published_at: "2026-05-29T04:10:19.000Z"
 custom_excerpt: "And the ones you want to keep using in your automation flows"
-feature_image: "images/2026-05-g6TPmDvgO9ru-aqP.png"
+feature_image: "images/cover.jpg"
 ---
 
 <p>If you have ever waited for <code>Install-PSResource</code> to trudge through a long list of modules, for example, the <code>Az</code> one, and thought it felt no faster than the <code>Install-Module</code> days it was meant to replace, in the new preview release something <em>changed</em>.</p><p>But there are two other features that also change how the future of PSResourceGet is going to look.</p><p>The release dropped last week, including a post from Sydney Smith. With a couple of bug fixes included, three features stood out both in the release and the blog post.  PSResourceGet is maturing and focusing more on becoming an enterprise tool.</p><p>In this blog post, we'll take a further look at how parallel execution makes bulk installation faster. How Microsoft Artifact Registry (MAR) becomes the default trusted repository. And how a Microsoft DSC resource is shipped with PSResourceGet.</p><h2 id="installing-the-preview">Installing the preview</h2><p>Each section of this post will contain code snippets that you can follow along with. If you want to test them out yourself, you can use the following command if you're running PowerShell 7.6+:</p><pre><code class="language-powershell">Install-PSResource -Name Microsoft.PowerShell.PSResourceGet `

@@ -4,7 +4,7 @@ status: published
 tags: ["Bicep", "Azure"]
 published_at: "2026-07-13T04:53:02.000Z"
 custom_excerpt: "Ship private Bicep extensions through the OCI registry your team already trusts."
-feature_image: "images/2026-07-G5aO5vhrJc5bJCA1.png"
+feature_image: "images/cover.jpg"
 ---
 
 <p>Bicep v0.45.6 just launched a couple of days ago, and there's an interesting new experimental feature added: OCI registry support for publishing and restoring Bicep artifacts.</p><p>To get right off the bat, in practical terms, authors are no longer limited to Azure Container Registry (ACR) for publishing/restoring. You can now store any private extension in an OCI-compliant registry that your organization might already operate. That includes GitHub Container Registry, Docker Hub, or a self-hosted registry such as <a href="https://goharbor.io/">Harbor</a>.</p><p>But this isn't just a simple change. It's more than that. That's because it lets teams distribute Bicep extensions through the same registry platform and DevOps processes that they use for other internal artifacts. </p><blockquote>

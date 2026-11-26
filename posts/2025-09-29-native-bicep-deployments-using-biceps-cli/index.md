@@ -4,7 +4,7 @@ status: published
 tags: ["Bicep"]
 published_at: "2025-09-29T03:04:51.000Z"
 custom_excerpt: "No more AZ CLI or Azure PowerShell to perform Bicep file deployments"
-feature_image: "images/2025-09-bicep-feature-image.png"
+feature_image: "images/cover.jpg"
 feature_image_alt: "Natie Bicep deployments with Bicep's CLI"
 ---
 

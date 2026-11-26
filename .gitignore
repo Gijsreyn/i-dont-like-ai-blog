@@ -14,3 +14,6 @@ Thumbs.db
 
 # The covers next to each other, made again by ./cover.ps1 -Sheet
 /brand/contact-sheet.jpg
+
+# The plan of ./cover.ps1 -Adopt: made once, to give the posts from before the house style their cover
+/brand/adopt.csv

@@ -4,7 +4,7 @@ status: published
 tags: ["Documentation", "Azure"]
 published_at: "2025-09-22T05:30:17.000Z"
 custom_excerpt: "Learn how to track and visualize Ghost blog visitors by combining Google Analytics insights with Azure’s cloud tools"
-feature_image: "images/2025-09-feature-picture.png"
+feature_image: "images/cover.jpg"
 feature_image_alt: "Integrate Google Analytics in Ghost theme"
 feature_image_caption: "<span style=\"white-space: pre-wrap;\">Integrate Google Analytics in Ghost theme</span>"
 ---
