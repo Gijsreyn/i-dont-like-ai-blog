@@ -6,15 +6,10 @@ name: Check
 #
 # The site is new and thrown away afterwards, and has the theme Ghost comes with: this workflow needs no secrets,
 # so it also runs for a pull request from a fork.
+# It runs for every pull request, whatever it changes: the check is required for the branch main, and a required
+# check that does not start keeps a pull request from being merged.
 on:
   pull_request:
-    paths:
-      - posts/**
-      - "*.ps1"
-      - "*.psd1"
-      - tools/**
-      - .semgrep/**
-      - .github/workflows/check.yml
   workflow_dispatch:
 
 permissions:

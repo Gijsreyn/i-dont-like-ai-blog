@@ -1,6 +1,6 @@
 ---
 title: "I rebuilt this blog in six days: a new theme, an SDK and a public repository"
-status: draft
+status: published
 tags: ["PowerShell", "Meta"]
 custom_excerpt: "I rewrote my blog site with a new theme, using an SDK I created for Ghost's REST API."
 feature_image: images/cover.jpg
