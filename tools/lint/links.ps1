@@ -22,6 +22,9 @@
     - A reference without its line, [text][99], is a warning and not an error.
     - The tags in the front matter and a line such as [!NOTE] look like such a reference to it. Those two are
       left out here.
+    - A link without the address of the site, /courses/a-course/a-lesson/, is a file that is not there to it.
+      Here it is right when its last part is the slug of a page, a post or a tag of the repository, and a
+      warning when it is not.
 
 .EXAMPLE
     ./lint.ps1 links
@@ -201,7 +204,38 @@ function Get-FrontMatterEnd {
     $frontMatter[$File]
 }
 
+# What the site names by a slug: a page and a post by the name of their folder, without the day in front of it for
+# a post, and a tag by the name of its file. To know a path on the site from a file that is not there.
+$slugs = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+foreach ($folder in 'pages', 'posts') {
+    $path = Join-Path -Path $root -ChildPath $folder
+    if (Test-Path -LiteralPath $path -PathType Container) {
+        foreach ($item in Get-ChildItem -LiteralPath $path -Directory) {
+            [void] $slugs.Add(($item.Name -replace '^\d{4}-\d{2}-\d{2}-', ''))
+        }
+    }
+}
+$path = Join-Path -Path $root -ChildPath 'tags'
+if (Test-Path -LiteralPath $path -PathType Container) {
+    foreach ($item in Get-ChildItem -LiteralPath $path -Filter '*.md' -File) {
+        [void] $slugs.Add($item.BaseName)
+    }
+}
+
 foreach ($issue in $issues) {
+    # A link that starts with one / is a path on the site, /courses/a-course/a-lesson/, and not a file of the
+    # repository, which is what mlc looks for. Its last part is the slug of a page, a post or a tag. When that
+    # is one of this repository the link is right. When it is not, the path may still be one the theme makes,
+    # such as /blog/: that is for a reader to look at, so it is a warning.
+    if ("$($issue.target)" -match '^/(?!/)') {
+        $slug = @(("$($issue.target)" -replace '[?#].*$', '') -split '/' | Where-Object { $_ }) | Select-Object -Last 1
+        if (-not $slug -or $slugs.Contains($slug)) {
+            continue
+        }
+        $issue.severity = 'warning'
+        $issue.message = 'A path on the site that no page, post or tag here has the slug of'
+    }
+
     # mlc names a file in full when it was given by name: from the root of the repository is what is shown.
     $file = "$($issue.source)"
     if ([System.IO.Path]::IsPathRooted($file)) {

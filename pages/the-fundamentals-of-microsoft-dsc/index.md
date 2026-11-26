@@ -19,7 +19,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/the-fundamentals-of-microsoft-dsc/introduction-to-microsoft-dsc/">Introduction to Microsoft Desired State Configuration (DSC)</a>
+          <a href="/courses/the-fundamentals-of-microsoft-dsc/introduction-to-microsoft-dsc/">Introduction to Microsoft Desired State Configuration (DSC)</a>
         </span>
         <span class="lesson-item-duration">5 min</span>
       </div>
@@ -27,7 +27,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/the-fundamentals-of-microsoft-dsc/installing-microsoft-dsc/">Installing Microsoft Desired State Configuration (DSC)</a>
+          <a href="/courses/the-fundamentals-of-microsoft-dsc/installing-microsoft-dsc/">Installing Microsoft Desired State Configuration (DSC)</a>
         </span>
         <span class="lesson-item-duration">10 min</span>
       </div>
@@ -35,7 +35,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/the-fundamentals-of-microsoft-dsc/your-first-resource-invocation/">Your first resource invocation</a>
+          <a href="/courses/the-fundamentals-of-microsoft-dsc/your-first-resource-invocation/">Your first resource invocation</a>
         </span>
         <span class="lesson-item-duration">10 min</span>
       </div>
@@ -43,7 +43,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/the-fundamentals-of-microsoft-dsc/practicing-and-exploring-the-fundamentals-of-microsoft-dsc-getting-started/">Practicing and exploring</a>
+          <a href="/courses/the-fundamentals-of-microsoft-dsc/practicing-and-exploring-the-fundamentals-of-microsoft-dsc-getting-started/">Practicing and exploring</a>
         </span>
         <span class="lesson-item-duration">20 min</span>
       </div>

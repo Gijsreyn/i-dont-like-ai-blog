@@ -24,7 +24,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/introduction-to-migrating-from-powershell-dsc/">Introduction to migrating from PowerShell DSC</a>
+          <a href="/courses/migrating-from-powershell-dsc/introduction-to-migrating-from-powershell-dsc/">Introduction to migrating from PowerShell DSC</a>
         </span>
         <span class="lesson-item-duration">4 min</span>
       </div>
@@ -32,7 +32,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/why-migrate-and-when-not-to/">Why migrate, and when not to</a>
+          <a href="/courses/migrating-from-powershell-dsc/why-migrate-and-when-not-to/">Why migrate, and when not to</a>
         </span>
         <span class="lesson-item-duration">8 min</span>
       </div>
@@ -40,7 +40,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/inventory-what-you-have-psdsc/">Inventory what you have</a>
+          <a href="/courses/migrating-from-powershell-dsc/inventory-what-you-have-psdsc/">Inventory what you have</a>
         </span>
         <span class="lesson-item-duration">12 min</span>
       </div>
@@ -48,7 +48,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/build-and-inventory-the-bindery-estate/">Build and inventory the Bindery estate</a>
+          <a href="/courses/migrating-from-powershell-dsc/build-and-inventory-the-bindery-estate/">Build and inventory the Bindery estate</a>
         </span>
         <span class="lesson-item-duration">20 min</span>
       </div>
@@ -56,7 +56,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/choose-a-migration-path/">Choose a migration path</a>
+          <a href="/courses/migrating-from-powershell-dsc/choose-a-migration-path/">Choose a migration path</a>
         </span>
         <span class="lesson-item-duration">10 min</span>
       </div>
@@ -64,7 +64,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/knowledge-check-plan-your-migration/">Knowledge check</a>
+          <a href="/courses/migrating-from-powershell-dsc/knowledge-check-plan-your-migration/">Knowledge check</a>
         </span>
         <span class="lesson-item-duration">5 min</span>
       </div>
@@ -72,7 +72,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/summary-plan-your-migration/">Summary</a>
+          <a href="/courses/migrating-from-powershell-dsc/summary-plan-your-migration/">Summary</a>
         </span>
         <span class="lesson-item-duration">3 min</span>
       </div>
@@ -90,7 +90,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/introduction-to-migrating-configurations-and-resources/">Introduction to migrating configurations and resources</a>
+          <a href="/courses/migrating-from-powershell-dsc/introduction-to-migrating-configurations-and-resources/">Introduction to migrating configurations and resources</a>
         </span>
         <span class="lesson-item-duration">3 min</span>
       </div>
@@ -98,7 +98,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/path-a-adapt-in-place/">Path A: Adapt in place</a>
+          <a href="/courses/migrating-from-powershell-dsc/path-a-adapt-in-place/">Path A: Adapt in place</a>
         </span>
         <span class="lesson-item-duration">12 min</span>
       </div>
@@ -106,7 +106,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/adapt-the-legacy-configuration/">Adapt the legacy configuration</a>
+          <a href="/courses/migrating-from-powershell-dsc/adapt-the-legacy-configuration/">Adapt the legacy configuration</a>
         </span>
         <span class="lesson-item-duration">15 min</span>
       </div>
@@ -114,7 +114,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/path-b-import-your-compiled-mofs/">Path B: Import your compiled MOFs</a>
+          <a href="/courses/migrating-from-powershell-dsc/path-b-import-your-compiled-mofs/">Path B: Import your compiled MOFs</a>
         </span>
         <span class="lesson-item-duration">12 min</span>
       </div>
@@ -122,7 +122,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/convert-a-mof-file/">Convert a MOF file</a>
+          <a href="/courses/migrating-from-powershell-dsc/convert-a-mof-file/">Convert a MOF file</a>
         </span>
         <span class="lesson-item-duration">15 min</span>
       </div>
@@ -130,7 +130,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/path-c-from-script-based-to-class-based/">Path C: From script-based to class-based</a>
+          <a href="/courses/migrating-from-powershell-dsc/path-c-from-script-based-to-class-based/">Path C: From script-based to class-based</a>
         </span>
         <span class="lesson-item-duration">15 min</span>
       </div>
@@ -138,7 +138,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/rewrite-appenvironment-as-a-class/">Rewrite AppEnvironment as a class</a>
+          <a href="/courses/migrating-from-powershell-dsc/rewrite-appenvironment-as-a-class/">Rewrite AppEnvironment as a class</a>
         </span>
         <span class="lesson-item-duration">20 min</span>
       </div>
@@ -146,7 +146,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/path-d-going-native/">Path D: Going native</a>
+          <a href="/courses/migrating-from-powershell-dsc/path-d-going-native/">Path D: Going native</a>
         </span>
         <span class="lesson-item-duration">8 min</span>
       </div>
@@ -154,7 +154,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/knowledge-check-migrate-configurations-and-resources/">Knowledge check</a>
+          <a href="/courses/migrating-from-powershell-dsc/knowledge-check-migrate-configurations-and-resources/">Knowledge check</a>
         </span>
         <span class="lesson-item-duration">5 min</span>
       </div>
@@ -162,7 +162,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/summary-migrate-configurations-and-resources/">Summary</a>
+          <a href="/courses/migrating-from-powershell-dsc/summary-migrate-configurations-and-resources/">Summary</a>
         </span>
         <span class="lesson-item-duration">3 min</span>
       </div>
@@ -180,7 +180,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/introduction-to-replacing-the-lcm/">Introduction to replacing the LCM</a>
+          <a href="/courses/migrating-from-powershell-dsc/introduction-to-replacing-the-lcm/">Introduction to replacing the LCM</a>
         </span>
         <span class="lesson-item-duration">3 min</span>
       </div>
@@ -188,7 +188,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/map-lcm-features-to-microsoft-dsc/">Map LCM features to Microsoft DSC</a>
+          <a href="/courses/migrating-from-powershell-dsc/map-lcm-features-to-microsoft-dsc/">Map LCM features to Microsoft DSC</a>
         </span>
         <span class="lesson-item-duration">12 min</span>
       </div>
@@ -196,7 +196,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/own-the-enforcement-schedule/">Own the enforcement schedule</a>
+          <a href="/courses/migrating-from-powershell-dsc/own-the-enforcement-schedule/">Own the enforcement schedule</a>
         </span>
         <span class="lesson-item-duration">10 min</span>
       </div>
@@ -204,7 +204,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/reboots-and-cross-node-coordination/">Reboots and cross-node coordination</a>
+          <a href="/courses/migrating-from-powershell-dsc/reboots-and-cross-node-coordination/">Reboots and cross-node coordination</a>
         </span>
         <span class="lesson-item-duration">10 min</span>
       </div>
@@ -212,7 +212,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/migrate-credentials/">Migrate credentials</a>
+          <a href="/courses/migrating-from-powershell-dsc/migrate-credentials/">Migrate credentials</a>
         </span>
         <span class="lesson-item-duration">10 min</span>
       </div>
@@ -220,7 +220,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/prove-equivalence-end-to-end/">Prove equivalence end to end</a>
+          <a href="/courses/migrating-from-powershell-dsc/prove-equivalence-end-to-end/">Prove equivalence end to end</a>
         </span>
         <span class="lesson-item-duration">20 min</span>
       </div>
@@ -228,7 +228,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/pitfalls-from-the-field/">Pitfalls from the field</a>
+          <a href="/courses/migrating-from-powershell-dsc/pitfalls-from-the-field/">Pitfalls from the field</a>
         </span>
         <span class="lesson-item-duration">8 min</span>
       </div>
@@ -236,7 +236,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/knowledge-check-replace-the-lcm/">Knowledge check</a>
+          <a href="/courses/migrating-from-powershell-dsc/knowledge-check-replace-the-lcm/">Knowledge check</a>
         </span>
         <span class="lesson-item-duration">5 min</span>
       </div>
@@ -244,7 +244,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="https://idontlikeai.dev/courses/migrating-from-powershell-dsc/summary-and-next-steps/">Summary and next steps</a>
+          <a href="/courses/migrating-from-powershell-dsc/summary-and-next-steps/">Summary and next steps</a>
         </span>
         <span class="lesson-item-duration">5 min</span>
       </div>
@@ -268,7 +268,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
 <p>Don't worry if you're rusty on the Microsoft DSC side. Each unit explains the construct before using it, and every command in the exercises is shown in full. The PowerShell DSC knowledge is the part that's hard to substitute, because this course is about translating something you already own.</p>
 <blockquote>
 <p>[!TIP]<br>
-If you've never applied a configuration document with Microsoft DSC, work through the getting-started chapters of <a href="https://leanpub.com/themicrosoftdschandbook">The Microsoft DSC Handbook</a> or <a href="https://www.idontlikeai.dev/courses/the-fundamentals-of-microsoft-dsc/">The Fundamentals of Microsoft DSC</a> first. This course assumes the mechanics and focuses entirely on the translation.</p>
+If you've never applied a configuration document with Microsoft DSC, work through the getting-started chapters of <a href="https://leanpub.com/themicrosoftdschandbook">The Microsoft DSC Handbook</a> or <a href="/courses/the-fundamentals-of-microsoft-dsc/">The Fundamentals of Microsoft DSC</a> first. This course assumes the mechanics and focuses entirely on the translation.</p>
 </blockquote>
 <h2 id="what-youll-learn">What you'll learn</h2>
 <ul>

@@ -19,7 +19,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="http://idontlikeai.dev/courses/build-custom-bicep-extensions-with-bicep-local-deploy/introduction-to-bicep-local-deploy-extensions/">Introduction to Bicep Local Deploy extensions</a>
+          <a href="/courses/build-custom-bicep-extensions-with-bicep-local-deploy/introduction-to-bicep-local-deploy-extensions/">Introduction to Bicep Local Deploy extensions</a>
         </span>
         <span class="lesson-item-duration">20 min</span>
       </div>
@@ -27,7 +27,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="http://idontlikeai.dev/courses/build-custom-bicep-extensions-with-bicep-local-deploy/creating-your-first-bicep-local-deploy-extension/">Creating your first Bicep Local Deploy extension</a>
+          <a href="/courses/build-custom-bicep-extensions-with-bicep-local-deploy/creating-your-first-bicep-local-deploy-extension/">Creating your first Bicep Local Deploy extension</a>
         </span>
         <span class="lesson-item-duration">45 min</span>
       </div>
@@ -35,7 +35,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="http://idontlikeai.dev/courses/build-custom-bicep-extensions-with-bicep-local-deploy/testing-your-bicep-local-deploy-extension/">Testing your Bicep Local Deploy extension</a>
+          <a href="/courses/build-custom-bicep-extensions-with-bicep-local-deploy/testing-your-bicep-local-deploy-extension/">Testing your Bicep Local Deploy extension</a>
         </span>
         <span class="lesson-item-duration">60 min</span>
       </div>
@@ -43,7 +43,7 @@ feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be7
     <li>
       <div class="lesson-item-content">
         <span class="lesson-item-title">
-          <a href="http://idontlikeai.dev/courses/build-custom-bicep-extensions-with-bicep-local-deploy/documentation-and-publishing-bicep-local-deploy-extension/">Documentation and publishing Bicep Local Deploy extension</a>
+          <a href="/courses/build-custom-bicep-extensions-with-bicep-local-deploy/documentation-and-publishing-bicep-local-deploy-extension/">Documentation and publishing Bicep Local Deploy extension</a>
         </span>
         <span class="lesson-item-duration">35 min</span>
       </div>

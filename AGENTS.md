@@ -271,10 +271,11 @@ This repository decides what the sites show, so something that was made in Ghost
 or the site on this machine does not have it and the next publish does not know about it.
 
 ```powershell
-./pull.ps1          # a file for every tag and every page of the live site that has none here yet,
-                    # and the settings of the theme when there is a staff access token
-./pull.ps1 -Force   # also overwrite the files that differ: the folders become what the live site has
-./pull.ps1 -Local   # the same, from the site on this machine
+./pull.ps1            # a file for every tag and every page of the live site that has none here yet,
+                      # and the settings of the theme when there is a staff access token
+./pull.ps1 -Force     # also overwrite the files that differ: the folders become what the live site has
+./pull.ps1 -Local     # the same, from the site on this machine
+./pull.ps1 -Lessons   # also the lessons of the courses, as posts
 ```
 
 `pull.ps1` only reads from the site. Look at what it wrote with `git status` and `git diff`, and commit it.
@@ -285,11 +286,37 @@ or the site on this machine does not have it and the next publish does not know 
   the cards of the editor. Look at it with `./preview.ps1` first.
 - **Drafts are written too**, and this repository is public. Leave out of a commit what is not to be read yet.
 - **Pictures stay where they are**: a page from the live site points to its pictures on the live site.
-- **Posts are not pulled.** A post that was written in Ghost Admin, such as the lessons of a course, is not in
-  this repository. `./preview.ps1 -FromLive` copies everything of the live site to the site on this machine.
+- **Links to the site itself lose its address.** Ghost answers with `https://<the site>/courses/a-course/` in a
+  link, and the file gets `/courses/a-course/`. Such a link stays on the site that shows it, so on the site on
+  this machine a lesson leads to the lesson on this machine. Write your own links to the site that way too.
+  Pictures, and links to what is below `/content/`, keep their address. A file is compared with the address in
+  its links, so it does not differ from the site for this.
+- **Posts are pulled when you ask for them.** The posts that were written here are here already, so name the
+  ones that were written in Ghost Admin. `-Lessons` takes the lessons of the courses. A course is a page with
+  the tag `Course`, and its lessons are the posts that carry the tag with the slug of that page.
+  `-PostFilter 'tag:powershell'` takes the posts that match a filter of Ghost, in which a tag is named by its
+  slug. `./preview.ps1 -FromLive` is still the way to copy everything of the live site to the site on this
+  machine.
 
-`pull.ps1` deletes nothing: a tag or a page without a file stays on the site, and a file without one stays
-here.
+A post that was pulled needs more care than a page:
+
+- **It becomes `posts/<date>-<slug>/index.md`**, with the day it was published. A post that already has a file
+  anywhere below `posts` keeps that file. So the folder of a lesson can be moved, to `posts/courses/<course>`
+  for example, and the next pull still finds it.
+- **Its content follows the rule for pages.** Markdown cards come back as Markdown and anything else as the
+  HTML that Ghost renders. In that HTML an empty line in a code block is written as `&#10;` at the end of the
+  line before it. Markdown stops reading HTML at an empty line, and a browser reads `&#10;` as the line break.
+- **The next publish rewrites it.** A post that is made of the cards of the editor differs from its file. The
+  dry run of the workflow `Publish` lists it as "Would update", and a real run makes it one Markdown card on
+  the live site. Look at the lessons with `./preview.ps1` before that run.
+- **A lesson for members is public here.** The file holds all of the text of a post, also when the site shows
+  it to members or to paying members only. The column `Visibility` says who may read it on the site, and
+  `visibility` in the front matter keeps it that way there.
+- **It needs a version of the module Ghost that has `Export-GhostPost`.** `pull.ps1` says so when the module is
+  older. See [When something does not work](#when-something-does-not-work).
+
+`pull.ps1` deletes nothing: a tag, a page or a post without a file stays on the site, and a file without one
+stays here.
 
 ## The site on this machine
 
@@ -451,6 +478,7 @@ them: `content_api_key` is another one on the site on this machine.
 | `tools/Get-ThemePackage.ps1`  | Downloads the newest package of the theme from the feed                    |
 | `tools/Set-ThemeSetting.ps1`  | Sends the settings of the theme in the two files to a site                 |
 | `tools/Save-ThemeSetting.ps1` | Writes the settings of the theme of a site to the two files                |
+| `tools/Set-RelativeLink.ps1`  | Takes the address of the site out of the links to its own pages            |
 | `tools/Test-Secret.ps1`       | Looks for secrets in the files git does not ignore, with Semgrep           |
 | `tools/cover.py`              | The work behind `cover.ps1`, in Python. uv runs it                         |
 | `tools/lint`                  | The linters, a script each. `links.ps1` looks for links that lead nowhere  |
@@ -464,6 +492,9 @@ them: `content_api_key` is another one on the site on this machine.
 
 - **The module Ghost cannot be installed.** `site.psd1` asks for a version that is not on the PowerShell Gallery
   yet. Point the environment variable `GHOST_MODULE_PATH` at the folder of the module to use a local one.
+- **`pull.ps1` stops and names `Export-GhostPost`.** Pulling posts takes a newer module than `GhostVersion` in
+  `site.psd1` asks for. Raise that version once the module is on the PowerShell Gallery, or use a local one
+  with `GHOST_MODULE_PATH`.
 - **`preview.ps1` refuses the folder of the theme.** There is a Ghost site inside it. Remove that one with
   `Remove-GhostLocalSite -Path <folder>`.
 - **A post shows the wrong theme or none.** `site.local.psd1` does not say where the theme is, or the folder is
