@@ -67,7 +67,7 @@ dsc resource list --adapter Microsoft.Adapter/PowerShell
 <li>The PowerShell 7+ adapter deliberately supports only class-based resources.</li>
 </ul>
 <p><strong>If a resource shows up in the first list but not the second, you've found a migration decision point.</strong></p>
-<p><img src="https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be709814/content/images/2026/09/adapter-visibility-venn.png" alt="Figure 1: The gap between the two adapter views is your Path C backlog." loading="lazy"></p>
+<p><img src="images/2026-09-adapter-visibility-venn.png" alt="Figure 1: The gap between the two adapter views is your Path C backlog." loading="lazy"></p>
 <h2 id="make-the-inventory-systematic">Make the inventory systematic</h2>
 <p>Comparing two console outputs by eye works for ten resources and fails for a hundred. The following script joins both views into a single migration-oriented report. Save it as <code>Get-DscMigrationInventory.ps1</code>.</p>
 <pre><code class="language-powershell"># Get-DscMigrationInventory.ps1

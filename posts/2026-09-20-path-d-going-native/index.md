@@ -74,7 +74,7 @@ custom_template: "custom-lesson"
 }
 </code></pre>
 <p>Nothing in that file mentions PowerShell. The executable could be Rust, Go, C#, Python, or a shell script. The engine cares only that it reads JSON and writes JSON.</p>
-<p><img src="https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be709814/content/images/2026/10/adapted-vs-native-invocation.png" alt="Figure 1: What Path D removes from the invocation chain." loading="lazy"></p>
+<p><img src="images/2026-10-adapted-vs-native-invocation.png" alt="Figure 1: What Path D removes from the invocation chain." loading="lazy"></p>
 <h2 id="native-doesnt-have-to-mean-another-language">Native doesn't have to mean another language</h2>
 <p>A command-based resource needs an executable, and <code>pwsh</code> is an executable. Nothing stops you from writing a manifest that calls PowerShell directly and keeping the resource logic in a script you already know how to maintain.</p>
 <p>The <code>Microsoft.PowerShell.PSResourceGet/PSResourceList</code> resource in the PSResourceGet repository works this way. Its <a href="https://github.com/PowerShell/PSResourceGet/blob/master/src/dsc/psresourcelist.dsc.resource.json">manifest</a> declares <code>pwsh</code> as the executable for every operation and pipes the JSON input into one script. The same pattern for <code>AppEnvironment</code> looks like this:</p>

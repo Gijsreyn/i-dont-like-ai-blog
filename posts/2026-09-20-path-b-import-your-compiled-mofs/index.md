@@ -63,7 +63,7 @@ DSC finds the extension when both files sit in the folder that contains the <cod
 </code></pre>
 <p>The extension invokes <code>pwsh</code>, so a copy installed for Windows PowerShell 5.1 isn't visible to it.</p>
 </blockquote>
-<p><img src="https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be709814/content/images/2026/10/mof-import-flow.png" alt="Figure 1: The engine never learns the input was MOF. The extension translates before the document reaches it." loading="lazy"></p>
+<p><img src="images/2026-10-mof-import-flow.png" alt="Figure 1: The engine never learns the input was MOF. The extension translates before the document reaches it." loading="lazy"></p>
 <h2 id="translate-on-the-fly">Translate on the fly</h2>
 <p>With the extension installed, this just works:</p>
 <pre><code class="language-powershell">dsc config test --file .\output\localhost.mof

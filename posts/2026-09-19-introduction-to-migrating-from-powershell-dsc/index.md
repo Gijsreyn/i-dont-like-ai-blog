@@ -10,7 +10,7 @@ custom_template: "custom-lesson"
 <p>If you've been working with PowerShell DSC for years, you have an <em>estate</em>. Folders full of <code>Configuration</code> scripts. Compiled MOF files sitting on pull servers. A custom script resource written in 2016 that nobody dares to touch. Scheduled Local Configuration Manager (LCM) runs that keep production servers in shape while everyone's attention is elsewhere.</p>
 <p>That estate doesn't disappear because a new engine shipped. And here's the good news: it doesn't have to. Microsoft built a migration story into DSC from the start. The PowerShell adapters run your existing modules. You can write your own import extension translating MOF files on the fly. Modern resource patterns show you what a rewrite looks like when you decide one is worth it.</p>
 <p>What's missing is the <em>connection</em> between those pieces: a structured way to look at what you have, decide per resource and per configuration what to do with it, and execute that decision without breaking production. That's what this module gives you.</p>
-<p><img src="https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be709814/content/images/2026/09/0GrzWVCr2DkB0M9-.png" alt="Figure 1: Illustration from old to new." loading="lazy"></p>
+<p><img src="images/2026-09-0GrzWVCr2DkB0M9-.png" alt="Figure 1: Illustration from old to new." loading="lazy"></p>
 <h2 id="scenario">Scenario</h2>
 <p>You're the platform engineer at <strong>Bindery</strong>, a company that manufactures and ships books. Bindery's operations team has run PowerShell DSC since 2017. Their estate is modest by enterprise standards, and typical:</p>
 <ul>

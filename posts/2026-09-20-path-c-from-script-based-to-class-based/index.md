@@ -117,7 +117,7 @@ Two lines differ from the script-based version on purpose, and both are about <c
 </tbody>
 </table>
 <p>That last row is the quiet quality-of-life win. Script resources forced you to declare every parameter three times and keep them synchronized by hand. When you didn't, the failure mode was a resource that silently ignored a property. The class declares state once, and all three methods read <code>$this</code>.</p>
-<p><img src="https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be709814/content/images/2026/10/script-vs-class-resource.png" alt="Figure 1: The same resource, expressed twice. The class removes the synchronization burden." loading="lazy"></p>
+<p><img src="images/2026-10-script-vs-class-resource.png" alt="Figure 1: The same resource, expressed twice. The class removes the synchronization burden." loading="lazy"></p>
 <h2 id="two-design-decisions-worth-making-now">Two design decisions worth making now</h2>
 <p>This is your one chance to make these cheaply. After the rewrite ships, both become breaking changes.</p>
 <h3 id="keep-ensure-and-accept-exist-beside-it">Keep <code>Ensure</code>, and accept <code>_exist</code> beside it</h3>

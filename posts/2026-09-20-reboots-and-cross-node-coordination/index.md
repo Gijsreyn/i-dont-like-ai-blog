@@ -106,7 +106,7 @@ Invoke-Command -ComputerName 'bindery-app01' -ScriptBlock {
 }
 </code></pre>
 <p>This is more code than <code>WaitForAll</code> was. It's also visible, testable, and it fails loudly with a message instead of quietly retrying forever.</p>
-<p><img src="https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be709814/content/images/2026/10/cross-node-coordination.png" alt="Figure 1: The dependency didn't go away. It moved up to a layer that can see both nodes." loading="lazy"></p>
+<p><img src="images/2026-10-cross-node-coordination.png" alt="Figure 1: The dependency didn't go away. It moved up to a layer that can see both nodes." loading="lazy"></p>
 <blockquote>
 <p>[!IMPORTANT]<br>
 The migration task is to <strong>find</strong> those hidden dependencies and make them explicit in the orchestration layer. A <code>WaitFor*</code> resource you didn't notice becomes a race condition after cutover. In configuration management, race conditions show up as "it worked in test."</p>

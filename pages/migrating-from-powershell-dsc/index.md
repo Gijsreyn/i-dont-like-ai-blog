@@ -4,7 +4,7 @@ status: published
 tags: ["Course", "Migrating from PowerShell DSC"]
 published_at: "2026-09-18T10:28:08.000Z"
 custom_excerpt: "Learn how to migrate your PowerShell DSC estate to Microsoft DSC without breaking production"
-feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be709814/content/images/2026/09/X7F8emKzV5Od8Uyo.png"
+feature_image: "images/2026-09-X7F8emKzV5Od8Uyo.png"
 ---
 
 <!--kg-card-begin: html-->

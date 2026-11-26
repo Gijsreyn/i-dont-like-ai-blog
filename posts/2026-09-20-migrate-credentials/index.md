@@ -58,7 +58,7 @@ resources:
 </tr>
 </tbody>
 </table>
-<p><img src="https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be709814/content/images/2026/10/credential-sources.png" alt="Figure 1: One document, three legitimate sources. The document doesn't change when the source does." loading="lazy"></p>
+<p><img src="images/2026-10-credential-sources.png" alt="Figure 1: One document, three legitimate sources. The document doesn't change when the source does." loading="lazy"></p>
 <h2 id="what-secure-types-do-and-dont-do">What secure types do and don't do</h2>
 <p>When a value is typed secure, DSC redacts it wherever the engine controls the output: results show <code>&lt;secureValue&gt;</code> instead of the value, and trace messages redact it the same way.</p>
 <blockquote>

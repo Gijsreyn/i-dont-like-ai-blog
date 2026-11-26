@@ -3,7 +3,7 @@ title: "The Microsoft DSC Handbook"
 status: published
 published_at: "2026-05-08T08:20:09.000Z"
 custom_excerpt: "The next chapter in Microsoft Desired State Configuration. Still part of the DSC working group, I continue to see what's coming before it lands. This book brings that knowledge directly to you."
-feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be709814/content/images/2026/05/the-microsoft-dsc-handbook.jpg"
+feature_image: "images/2026-05-the-microsoft-dsc-handbook.jpg"
 ---
 
 <!--kg-card-begin: html-->

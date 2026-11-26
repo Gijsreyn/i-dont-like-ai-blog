@@ -15,7 +15,7 @@ custom_template: "custom-lesson"
 <li><strong>Path C</strong> changes what's underneath the document, and you verify it by re-running the Path A document with one property changed.</li>
 <li><strong>Path D</strong> is the decision of <em>when</em> the rewrite is worth it, framed against everything you learned in A through C.</li>
 </ul>
-<p><img src="https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be709814/content/images/2026/09/paths-a-to-d-flow.png" alt="Figure 1: The document is the constant. Each path changes what sits on one side of it." loading="lazy"></p>
+<p><img src="images/2026-09-paths-a-to-d-flow.png" alt="Figure 1: The document is the constant. Each path changes what sits on one side of it." loading="lazy"></p>
 <h2 id="learning-objectives">Learning objectives</h2>
 <p>By the end of this module, you'll be able to:</p>
 <ul>

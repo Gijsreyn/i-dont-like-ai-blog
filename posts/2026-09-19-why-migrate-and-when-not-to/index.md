@@ -26,7 +26,7 @@ OpenDSC is community-driven open source. It's not officially supported by Micros
 <h3 id="state-is-no-longer-hidden">State is no longer hidden</h3>
 <p>There's a subtler reason that doesn't fit on a slide. PowerShell DSC's architecture hid state inside the LCM: pending MOFs, current MOFs, backup MOFs, all in <code>C:\Windows\System32\Configuration</code>. Troubleshooting meant spelunking through that hidden state and hoping <code>Get-DscConfigurationStatus</code> told you the truth.</p>
 <p>Microsoft DSC is stateless. A document goes in, a result comes out. That's easier to reason about, easier to log, and dramatically easier to automate around, as you'll see when you build the equivalence check in Module 3.</p>
-<p><img src="https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be709814/content/images/2026/09/fShdLuV4wutqofxb.png" alt="Figure 1: Where the state lives" loading="lazy"></p>
+<p><img src="images/2026-09-fShdLuV4wutqofxb.png" alt="Figure 1: Where the state lives" loading="lazy"></p>
 <h2 id="the-case-for-waiting">The case for waiting</h2>
 <p>An honest planning unit names the reasons to hold off, too:</p>
 <table>

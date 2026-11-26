@@ -3,7 +3,7 @@ title: "The Docs as Code Primer"
 status: published
 published_at: "2023-09-01T13:23:00.000Z"
 custom_excerpt: "Docs as Code Primer flips the traditional documentation into a new jacket. Instead of writing content in isolation, this book is a practical handbook for putting the Docs-as-Code philosophy into practice."
-feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be709814/content/images/2025/11/docs-as-code-primer.png"
+feature_image: "images/2025-11-docs-as-code-primer.png"
 ---
 
 <!--kg-card-begin: html-->

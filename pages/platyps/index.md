@@ -3,7 +3,7 @@ title: "Platy(pus)PS"
 status: published
 published_at: "2025-11-15T13:25:38.000Z"
 custom_excerpt: "Platy(pus)PS has been around for a very long time. But this book covers the new Microsoft.PowerShell.PlatyPS PowerShell module, exploring the basic syntax and its newly structured object model."
-feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be709814/content/images/2025/11/platypus.png"
+feature_image: "images/2025-11-platypus.png"
 ---
 
 <!--kg-card-begin: html-->

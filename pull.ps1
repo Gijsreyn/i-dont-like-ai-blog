@@ -22,6 +22,12 @@
     content of a page is. A post that already has a file anywhere below posts keeps that file. The file of a
     post holds all of its text, also when the site shows the post to members only.
 
+    A picture stays where it is: the file of a page or a post has its address on the site. With -Images the
+    pictures that were uploaded to the site are fetched as well and written next to the page or the post, in a
+    folder images, and the file names each of them by its path. A file that was pulled before without its
+    pictures gets them too, as long as it was not changed here. The next publish then uploads those pictures to
+    the site again, once, and the site shows that upload from then on.
+
     A link to a page of the site itself is written without the address of the site: /courses/a-course/ and not
     https://example.com/courses/a-course/. Such a link stays on the site that shows it, so on the site on this
     machine it leads to the page on this machine. A picture keeps its address, and so does a link to a file of
@@ -58,6 +64,11 @@
     ./pull.ps1 -PostFilter 'tag:powershell+status:published'
 
     Also writes a folder in posts for every published post with the tag PowerShell.
+
+.EXAMPLE
+    ./pull.ps1 -Lessons -Images
+
+    Also fetches the pictures of the pages and of the lessons, and writes them next to each of them.
 #>
 [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'NoPosts')]
 param(
@@ -69,6 +80,9 @@ param(
     [Parameter(Mandatory, ParameterSetName = 'PostFilter')]
     [ValidateNotNullOrEmpty()]
     [string] $PostFilter,
+
+    # Also fetch the pictures of the pages, and of the posts that are read, and write them next to each of them.
+    [switch] $Images,
 
     # Overwrite a file that differs from what the site has.
     [switch] $Force,
@@ -90,6 +104,20 @@ if ($withPosts -and -not (Get-Command -Name 'Export-GhostPost' -ErrorAction Sile
     $why = 'Reading posts takes the command Export-GhostPost, which this version of the module Ghost does not have.'
     $advice = 'Raise GhostVersion in site.psd1, or point GHOST_MODULE_PATH at the folder of a module that has it.'
     throw "$why $advice"
+}
+if ($Images -and -not (Get-Command -Name 'Export-GhostPage').Parameters.ContainsKey('IncludeImage')) {
+    $why = 'Fetching pictures takes the parameter -IncludeImage of Export-GhostPage and Export-GhostPost, which'
+    $advice = 'Raise GhostVersion in site.psd1, or point GHOST_MODULE_PATH at the folder of a module that has it.'
+    throw "$why this version of the module Ghost does not have. $advice"
+}
+
+# What the commands that write pages and posts are given. A module without -IncludeImage is not given it.
+$export = @{
+    Force  = $Force
+    WhatIf = $WhatIfPreference
+}
+if ($Images) {
+    $export['IncludeImage'] = $true
 }
 
 if ($Local) {
@@ -153,7 +181,7 @@ try {
     $tags = @(Export-GhostTag -Path $site.TagsPath -Force:$Force -WhatIf:$WhatIfPreference)
     $tags | Format-Table -Property Action, Name, Slug -AutoSize
 
-    $pages = @(Export-GhostPage -Path $site.PagesPath -Force:$Force -WhatIf:$WhatIfPreference)
+    $pages = @(Export-GhostPage -Path $site.PagesPath @export)
     $pages | Format-Table -Property Action, Status, Slug, Content -AutoSize
 
     $html = @($pages | Where-Object { $_.Content -eq 'Html' }).Count
@@ -182,7 +210,7 @@ try {
     }
     if ($filter) {
         Write-Information -MessageData "Reading the posts that match $filter."
-        $posts = @(Export-GhostPost -Path $site.PostsPath -Filter $filter -Force:$Force -WhatIf:$WhatIfPreference)
+        $posts = @(Export-GhostPost -Path $site.PostsPath -Filter $filter @export)
         $posts | Format-Table -Property Action, Status, Visibility, Slug, Content -AutoSize
 
         $html = @($posts | Where-Object { $_.Content -eq 'Html' }).Count
@@ -200,6 +228,15 @@ try {
         if ($closed -gt 0) {
             $what = "$closed of the posts are for members only on the site"
             Write-Information -MessageData "${what}. Committing them makes all of their text public here."
+        }
+    }
+
+    if ($Images) {
+        $pictures = @($pages + $posts | ForEach-Object { $_.SavedImages } | Where-Object { $_ }).Count
+        if ($pictures -gt 0) {
+            $what = "$pictures pictures were fetched and written next to their page or post"
+            $next = 'The next publish uploads them to the site again, once'
+            Write-Information -MessageData "${what}. ${next}: look at them with ./preview.ps1 first."
         }
     }
 

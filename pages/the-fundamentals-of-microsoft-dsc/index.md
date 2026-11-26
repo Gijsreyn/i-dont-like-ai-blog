@@ -5,7 +5,7 @@ featured: true
 tags: ["Course", "The fundamentals of Microsoft DSC"]
 published_at: "2025-10-16T02:51:48.000Z"
 custom_excerpt: "Learn the fundamentals of the Microsoft DSC configuration management tool for Windows, Linux, and macOS. "
-feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be709814/content/images/2025/10/the-fundamentals-of-microsoft-dsc-v3.png"
+feature_image: "images/2025-10-the-fundamentals-of-microsoft-dsc-v3.png"
 ---
 
 <!--kg-card-begin: html-->

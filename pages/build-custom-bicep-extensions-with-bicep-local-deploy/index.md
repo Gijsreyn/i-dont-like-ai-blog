@@ -5,7 +5,7 @@ featured: true
 tags: ["Course", "Build custom Bicep extensions with Bicep Local Deploy"]
 published_at: "2025-10-24T11:15:45.000Z"
 custom_excerpt: "Learn the fundamentals of custom Bicep extensions with Bicep Local Deploy"
-feature_image: "https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be709814/content/images/2025/10/1c2ba9b1-0626-4c70-abda-be1fc97e77d6.png"
+feature_image: "images/2025-10-1c2ba9b1-0626-4c70-abda-be1fc97e77d6.png"
 ---
 
 <!--kg-card-begin: html-->

@@ -81,7 +81,7 @@ The tutorial resource only supports a daily trigger, so this document creates a 
 </blockquote>
 <p>You now have two documents. The <em>schedule document</em> above describes the task. The <em>web server document</em> describes the server. The task runs <code>dsc config set</code> against the web server document on every interval.</p>
 <p>You can go one step further and let each scheduled run apply the schedule document as well. Then, if someone edits or disables the task, the next run puts it back the way the document describes. The schedule keeps the configuration correct, and the configuration keeps the schedule correct.</p>
-<p><img src="https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be709814/content/images/2026/10/scheduled-enforcement-loop.png" alt="Figure 1: The schedule enforces the configuration, and a configuration enforces the schedule." loading="lazy"></p>
+<p><img src="images/2026-10-scheduled-enforcement-loop.png" alt="Figure 1: The schedule enforces the configuration, and a configuration enforces the schedule." loading="lazy"></p>
 <blockquote>
 <p>[!NOTE]<br>
 Something still has to apply the schedule document the very first time. That can be a build pipeline, a machine image, or a script that runs once during setup. You can't avoid this step, and the LCM had the same problem: something had to push its meta-configuration too. The same goes for a task that someone deletes. A deleted task can't run, so nothing puts it back until the bootstrap step runs again.</p>

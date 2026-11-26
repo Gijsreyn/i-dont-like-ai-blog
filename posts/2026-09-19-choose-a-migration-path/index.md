@@ -7,7 +7,7 @@ custom_template: "custom-lesson"
 ---
 
 <p>With the inventory in hand, every configuration and resource in your estate lands in one of four buckets. Think of them as increasing levels of effort and increasing levels of payoff.</p>
-<p><img src="https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be709814/content/images/2026/09/four-migration-paths.png" alt="Figure 1: The four migration paths. Effort and payoff both increase from A to D." loading="lazy"></p>
+<p><img src="images/2026-09-four-migration-paths.png" alt="Figure 1: The four migration paths. Effort and payoff both increase from A to D." loading="lazy"></p>
 <h2 id="the-four-paths">The four paths</h2>
 <p><strong>Path A — Adapt in place.</strong></p>
 <p>Keep the module exactly as it is. Reference it through an adapter in a Microsoft DSC configuration document. Zero changes to resource code; the only thing that changes is the envelope around it.</p>
@@ -97,7 +97,7 @@ The effort estimates assume a person doing the work by hand, without AI assistan
 </blockquote>
 <h2 id="a-decision-flow-you-can-defend">A decision flow you can defend</h2>
 <p>Work down this list per resource. The first match wins:</p>
-<p><img src="https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be709814/content/images/2026/09/migration-decision-flow.png" alt="Figure 2: The decision flow per resource. The first match wins." loading="lazy"></p>
+<p><img src="images/2026-09-migration-decision-flow.png" alt="Figure 2: The decision flow per resource. The first match wins." loading="lazy"></p>
 <blockquote>
 <p>[!IMPORTANT]<br>
 Paths A and B are not failures of ambition. They move the <em>orchestration layer</em> to Microsoft DSC while leaving resource code alone, which is exactly the decoupling that makes Paths C and D safe to do later, one resource at a time, with a working system between every step.</p>

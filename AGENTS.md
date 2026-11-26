@@ -276,6 +276,7 @@ or the site on this machine does not have it and the next publish does not know 
 ./pull.ps1 -Force     # also overwrite the files that differ: the folders become what the live site has
 ./pull.ps1 -Local     # the same, from the site on this machine
 ./pull.ps1 -Lessons   # also the lessons of the courses, as posts
+./pull.ps1 -Images    # also the pictures of what is pulled, as files next to it
 ```
 
 `pull.ps1` only reads from the site. Look at what it wrote with `git status` and `git diff`, and commit it.
@@ -285,7 +286,8 @@ or the site on this machine does not have it and the next publish does not know 
   looks the same in most cases, but after the next publish it is one Markdown card on the site and no longer
   the cards of the editor. Look at it with `./preview.ps1` first.
 - **Drafts are written too**, and this repository is public. Leave out of a commit what is not to be read yet.
-- **Pictures stay where they are**: a page from the live site points to its pictures on the live site.
+- **Pictures stay where they are**: a page from the live site points to its pictures on the live site. With
+  `-Images` they come here too, see [Pictures of what was pulled](#pictures-of-what-was-pulled).
 - **Links to the site itself lose its address.** Ghost answers with `https://<the site>/courses/a-course/` in a
   link, and the file gets `/courses/a-course/`. Such a link stays on the site that shows it, so on the site on
   this machine a lesson leads to the lesson on this machine. Write your own links to the site that way too.
@@ -317,6 +319,29 @@ A post that was pulled needs more care than a page:
 
 `pull.ps1` deletes nothing: a tag, a page or a post without a file stays on the site, and a file without one
 stays here.
+
+### Pictures of what was pulled
+
+`./pull.ps1 -Images` also fetches the pictures of the pages, and of the posts when you ask for those with
+`-Lessons` or `-PostFilter`. A picture is written in the folder `images` next to the `index.md`, and the file
+names it by its path, as a post that was written here does.
+
+- **Which pictures.** The ones that were uploaded to the site: those with `/content/images/` in their address.
+  A picture at any other address keeps that address. Fetching needs no key, because a site shows its pictures to
+  everybody.
+- **Their names.** A picture is named after its path on the site: `.../content/images/2026/11/diagram.png`
+  becomes `images/2026-11-diagram.png`. A picture that already has its file is not fetched again.
+- **Files that were pulled before get their pictures too**, as long as they were not changed here. A file that
+  was changed is left alone, like any file that differs.
+- **The next publish uploads them again, once.** The live site then has each of those pictures twice, the one
+  from Ghost Admin and the one from this repository, and the post shows the second one. Ghost cannot remove a
+  picture. The dry run of the workflow `Publish` lists such a post as "Would update".
+- **A picture loses its other widths.** Ghost Admin lists a picture in several widths for small screens, and a
+  picture from a file is shown as it was uploaded.
+- **A picture that cannot be fetched keeps its address**, with a warning, and the next pull tries it again.
+- **Pictures are public here**, like the text. A picture of a lesson for members is in this repository too.
+- **It needs a version of the module Ghost whose `Export-GhostPost` has `-IncludeImage`.** `pull.ps1` says so
+  when the module is older.
 
 ## The site on this machine
 
@@ -492,9 +517,9 @@ them: `content_api_key` is another one on the site on this machine.
 
 - **The module Ghost cannot be installed.** `site.psd1` asks for a version that is not on the PowerShell Gallery
   yet. Point the environment variable `GHOST_MODULE_PATH` at the folder of the module to use a local one.
-- **`pull.ps1` stops and names `Export-GhostPost`.** Pulling posts takes a newer module than `GhostVersion` in
-  `site.psd1` asks for. Raise that version once the module is on the PowerShell Gallery, or use a local one
-  with `GHOST_MODULE_PATH`.
+- **`pull.ps1` stops and names `Export-GhostPost` or `-IncludeImage`.** Pulling posts, and pulling pictures,
+  takes a newer module than `GhostVersion` in `site.psd1` asks for. Raise that version once the module is on the
+  PowerShell Gallery, or use a local one with `GHOST_MODULE_PATH`.
 - **`preview.ps1` refuses the folder of the theme.** There is a Ghost site inside it. Remove that one with
   `Remove-GhostLocalSite -Path <folder>`.
 - **A post shows the wrong theme or none.** `site.local.psd1` does not say where the theme is, or the folder is

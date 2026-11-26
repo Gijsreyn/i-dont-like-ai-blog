@@ -12,7 +12,7 @@ custom_template: "custom-lesson"
 <p>Microsoft DSC has none of that, deliberately. The engine is stateless: a document goes in, a result comes out, nothing is scheduled and nothing is remembered.</p>
 <p>That sounds like a loss until you notice what it buys. Every LCM behavior was a <em>policy</em> decision: how often to converge, whether to auto-correct, when to reboot. Each one was implemented inside the enforcement engine and configurable only through a meta-configuration. Microsoft DSC moves those decisions out to the caller, where you can see them, version them, and review them.</p>
 <p>The catch is that "you can see them" also means "you have to make them." This module makes each one explicit.</p>
-<p><img src="https://storage.ghost.io/c/dd/64/dd64ba9d-7bdd-441e-bb5f-13f8be709814/content/images/2026/10/lcm-responsibilities-redistributed.png" alt="Figure 1: Nothing disappeared. Each responsibility moved to a layer where you own it explicitly." loading="lazy"></p>
+<p><img src="images/2026-10-lcm-responsibilities-redistributed.png" alt="Figure 1: Nothing disappeared. Each responsibility moved to a layer where you own it explicitly." loading="lazy"></p>
 <h2 id="learning-objectives">Learning objectives</h2>
 <p>By the end of this module, you'll be able to:</p>
 <ul>
