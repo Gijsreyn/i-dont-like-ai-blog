@@ -137,7 +137,7 @@ jobs:
           delete: true
           base-ref: ${{ inputs.base_ref }}
           dry-run: ${{ env.DRY_RUN }}
-          module-version: 0.6.1
+          module-version: 0.8.0
 
       # The action does not send the settings of the theme. Ghost only lets an owner or an administrator change
       # them, which takes the staff access token. They go last, when the theme they belong to is on the site.
