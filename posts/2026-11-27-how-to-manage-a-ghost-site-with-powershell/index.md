@@ -7,7 +7,7 @@ feature_image: images/cover.jpg
 feature_image_alt: ''
 ---
 
-Ghost Admin is useful for single posts. It's not great for multiple posts, mass publishing, testing a site design locally, or deploying to a live site. My [PowerShell Ghost Module][01] integrates the Ghost Admin API [02] and is used to perform those more repetitive actions. I am the sole maintainer of the project and am not associated with the Ghost Foundation.
+Ghost Admin is useful for single posts. It's not great for multiple posts, mass publishing, testing a site design locally, or deploying to a live site. My [PowerShell Ghost Module][01] integrates the [Ghost Admin API][02] and is used to perform those more repetitive actions. I am the sole maintainer of the project and am not associated with the Ghost Foundation.
 
 In this article, you learn how to:
 
