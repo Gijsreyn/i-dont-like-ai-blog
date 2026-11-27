@@ -1,11 +1,10 @@
 ---
 title: "How to manage a Ghost site with PowerShell"
-status: draft
+status: published
 tags: ["PowerShell"]
 custom_excerpt: "Install the Ghost module, start a site on your own machine, and manage posts, themes and members from the command line."
 feature_image: images/cover.jpg
 feature_image_alt: ''
-visibility: members
 ---
 
 Ghost Admin is useful for single posts. It's not great for multiple posts, mass publishing, testing a site design locally, or deploying to a live site. My [PowerShell Ghost Module][01] integrates the Ghost Admin API [02] and is used to perform those more repetitive actions. I am the sole maintainer of the project and am not associated with the Ghost Foundation.
@@ -166,7 +165,7 @@ Post as a Markdown file can be synced with the site using `Sync-GhostPost`. This
    ```text
    Action       Status     Slug                         Path
    ------       ------     ----                         ----
-   WouldCreate  draft      my-first-post-from-a-file    C:\ghost-lab\posts\2026-11-27-my-first-post-from-a-file\index.md
+   WouldCreate  draft      my-first-post-from-a-file    C:\source\ghost-lab\posts\2026-11-27-my-first-post-from-a-file\index.md
    ```
 
 This command will create a new folder for each post. The post's date is used to name the folder, the rest of the folder name is used to define the post's slug.
@@ -176,7 +175,7 @@ This command will create a new folder for each post. The post's date is used to 
    ```text
    Action       Status     Slug                         Path
    ------       ------     ----                         ----
-   Updated      published  my-first-post-from-a-file    C:\ghost-lab\posts\2026-11-27-my-first-post-from-a-file\index.md
+   Updated      published  my-first-post-from-a-file    C:\source\ghost-lab\posts\2026-11-27-my-first-post-from-a-file\index.md
    ```
 
 Good to know when you work this way:
@@ -267,7 +266,7 @@ Sync-GhostTheme -Path ./my-theme
 ```text
 Action    Name      Version  Fingerprint   Path
 ------    ----      -------  -----------   ----
-Updated   my-theme  1.7.6    84ace200cf68  C:\ghost-lab\my-theme
+Updated   my-theme  1.7.6    84ace200cf68  C:\source\ghost-lab\my-theme
 ```
 
 Only the files in the directory which have been modified since the last sync will be updated on the site. If the value of a theme setting is not valid, the Ghost API will return an error with the list of valid values.
