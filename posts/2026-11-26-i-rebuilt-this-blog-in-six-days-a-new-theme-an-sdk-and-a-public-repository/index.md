@@ -2,37 +2,35 @@
 title: "I rebuilt this blog in six days: a new theme, an SDK and a public repository"
 status: published
 tags: ["PowerShell", "Meta"]
-custom_excerpt: "I rewrote my blog site with a new theme, using an SDK I created for Ghost's REST API."
+custom_excerpt: "How I built a PowerShell module for Ghost, moved my posts into Markdown files, and made the blog easier to preview and publish."
 feature_image: images/cover.jpg
 feature_image_alt: ''
 visibility: members
 featured: true
 ---
 
-I have rewritten my blog site with a new theme, using an SDK. The reason is that the development of my theme was getting more and more out of sync, because I never automated it. That led me to create an SDK, explore Ghost's REST API, and open up my repository so people can see the Markdown files.
+I recently took 6 days to rebuild this blog, to avoid any more frustration with Ghost themes. To change themes I would have to copy and paste my local site setup to each of the themes, and cross my fingers that I'd correctly configured each of the settings. I wanted to be able to test different themes on my site without as much hassle.
 
-This post is how that went: what the SDK can do, how my posts became Markdown files, how I preview and publish them now, and how the images got a house style. If you run a Ghost site yourself, you can take all of it.
+To start, I created a PowerShell SDK to use with the Ghost REST API, to move my posts to a public repository of my choosing. This post will outline what I did and provide code samples for what you can reuse with your Ghost site.
 
-## A theme that got out of sync
+## Why I started with the theme
 
-I decided to develop my own theme. I didn't want to purchase one from Ghost's website, and with AI these days, I wanted to give it a try.
-
-The theme was sitting in a repository that wasn't maintained or tested, so the versions of the theme got out of sync. Every time I had to make a modification, I had the burden of checking it locally, setting up a bunch of stuff manually, and hoping all the settings were correct. The result speaks for itself now:
+I used Ghost theme repository to create my first theme with the aid of an AI. I didn't use it to maintain my Ghost site theme and so they eventually drifted apart.
 
 ![Figure 1: Repository layout Ghost theme][04]
 
-## Creating the SDK
+## Connect to Ghost from PowerShell
 
-Back in the day, I looked at the documentation of the [Ghost API][01], but it didn't make sense to me. With the new content, it was easier to create one. With a reference module and some AI usage, I was able to create such an SDK instantly.
+Since then, I've read the Ghost Admin API documentation. During my last attempt, I used it to create a PowerShell module to upload and activate a theme.
 
-The SDK is a PowerShell module called [Ghost][02], and it's on the PowerShell Gallery:
+I used a couple of examples found on GitHub to write the module which I've named Ghost, available in the PowerShell Gallery. Once installed, use the API key found in your Ghost integration to connect to your site.
 
 ```powershell
 Install-PSResource -Name Ghost
 Connect-Ghost -Url 'https://example.ghost.io' -AdminApiKey (Read-Host -Prompt 'Admin API key' -AsSecureString)
 ```
 
-Version 0.1.0 went out on November 20. It's at 0.8.0 now and has 42 commands, for posts, pages, tags, images, themes, members and tiers. A few of them:
+The first version was released on November 20, 2020. Since then, I've updated it to version 0.8.0, and added commands to create and manage posts, pages, tags and images on a Ghost site. I've also added commands to manage members and tiers of members on a Ghost site, as well as themes. Here are three examples:
 
 ```powershell
 # The five drafts that were changed most recently
@@ -45,53 +43,57 @@ Get-GhostTag -Include 'count.posts' -Order 'count.posts desc' -Limit 10
 New-GhostTheme -Path ./my-theme -Activate
 ```
 
-### What the API allows, and what it doesn't
+### Admin API limits that affect the workflow
 
-There are a couple of things that the Admin API lets you work on when using the module. These are just a few of those limits before you use it, because they explain why some commands work the way they do:
+The integration uses an authentication key to generate a short duration token which is then used to connect to the integration.
 
-- You never send the Admin API key itself. It has the form `<id>:<secret>`, and the module turns it into a token that Ghost accepts for five minutes. After that it makes a new one.
-- Ghost stores a post as a Lexical document, the format of its own editor. Luckily there is a Markdown card. Put one in the document and Ghost keeps your Markdown as you wrote it, and renders it itself.
-- With themes, an integration can upload one and activate it, and that's where it ends. Listing, downloading or deleting a theme is something you still do in Ghost Admin.
-- For the settings of a theme, the ones under **Settings > Design**, the key of an integration isn't enough. You need a staff access token.
-- Once an image is uploaded, it stays. The API has no way to delete one.
+It does not send the key. It does send the token.
 
-### The theme, in sync again
+- Post content: Posts on Ghost are stored as Lexical documents. I can include Markdown in Ghost documents using a Markdown card, and Ghost will render the markdown.
+- An integration can use Ghost API to upload a theme and activate it on Ghost. Admin of Ghost is used to manage theme files.
+- Modifying any of the settings in Settings > Design on Ghost would require a staff access token instead of the integration key.
+- Currently, the Ghost API doesn't support removal of images.
 
-This is the command for the problem I started with:
+## Sync the theme without uploading it every time
+
+`Sync-GhostTheme` solves the problem I started with. Give it a packaged theme:
 
 ```powershell
 Sync-GhostTheme -Path ./dist/my-theme.zip
 ```
 
 ```text
-Action    Name     Version Fingerprint  Path
-------    ----     ------- -----------  ----
-Updated   my-theme 1.4.0   7927f0a8f243 /repo/dist/my-theme.zip
+Action    Name     Version Fingerprint  Path
+------    ----     ------- -----------  ----
+Updated   my-theme 1.4.0   7927f0a8f243 /repo/dist/my-theme.zip
 ```
 
-It only uploads when the site doesn't show that theme yet. An integration can't ask Ghost which theme is live, so the command adds a file to the package, `assets/ghost-theme-fingerprint.txt`, with a hash of every file of the theme. The next run reads that file from the site.
+An integration can't find the active theme on Ghost, therefore, to check if the uploaded theme is different from the one currently active, the integration includes a fingerprint of the theme files with the asset file `assets/ghost-theme-fingerprint.txt`. Prior to this project, I used various methods to include Markdown in my posts including Markdown cards in the Ghost editor.
 
-## From the editor to Markdown files
+## Move posts from Ghost to Markdown
 
-My posts were a combination of both: `/markdown` cards, and posts fully written in Markdown. I wanted to open-source this, so I always have a backup, but can also apply CI/CD tooling to it if I want to.
+I want to be able to use Git to manage my posts. This way I could use Git to do diffs to see changes made. This is what I was doing at the time of the movement.
 
-`Export-GhostPost` wrote the posts of the site to files, with their images:
+I used `Export-GhostPost` to write the posts and their images to disk:
 
 ```powershell
 Export-GhostPost -Path ./posts -IncludeImage
 ```
 
-Every post is a folder now, and there are 103 of them:
+At the time of this movement, I had 103 folders containing posts. Each folder contains the following:
 
 ```text
 posts/
-  2026-11-26-my-post/
-    index.md
-    images/
-      cover.jpg
+  2026-11-26-my-post/
+    index.md
+    images/
+      cover.jpg
 ```
 
-An `index.md` starts with front matter, and the Markdown follows:
+- `index.md` containing the Ghost metadata of the post, in YAML, using front matter.
+- `body.md` containing the post.
+- `image1.png` being an image associated with the post.
+- `image2.png` another image associated with the post.
 
 ```markdown
 ---
@@ -106,50 +108,48 @@ Some **bold** text, and a picture:
 ![A diagram](images/diagram.png)
 ```
 
-`Sync-GhostPost` goes the other way and makes the site match the files. A post that didn't change is left alone:
+To sync these changes back to Ghost use `Sync-GhostPost`. To run Ghost on your computer and view the changes you've made, run the following script:
 
 ```powershell
 Sync-GhostPost -Path ./posts -Recurse
 ```
 
 ```text
-Action       Status     Slug          Path
-------       ------     ----          ----
-Created      draft      my-post       /repo/posts/2026-11-20-my-post/index.md
-Unchanged    published  older-post    /repo/posts/older-post.md
+Action       Status     Slug          Path
+------       ------     ----          ----
+Created      draft      my-post       /repo/posts/2026-11-20-my-post/index.md
+Unchanged    published  older-post    /repo/posts/older-post.md
 ```
 
 ## Preview and publish
 
-Now that everything is extracted, a bunch of scripts help me to instantly see a preview locally:
+Once running, you can preview what changes you've made to the repository posts, in a browser window, without affecting the live site.
 
 ```powershell
 ./preview.ps1 -Open
 ```
 
-It starts a Ghost site on my own machine, with the theme and the posts of the repository.
+In this project I'm using `cover.ps1` to generate images to use as post covers.
 
-The publish runs as a dry run, to see what has changed. That was the safe way while I was migrating all the posts, lessons, etcetera.
+I've also used this script to generate some images to use as post thumbnails. I ask the script to create a post cover, and it adds the title of the post to the image using the site's font. This image has dimensions 1600 x 900. I've used `./cover.ps1 -Adopt` to update the previous images to follow this style. I've also included some code in this script to pull the theme's colors and fonts to use in the prompts, to generate more images. I've implemented a dry run feature in the publish script to check the difference between the files on the server and on your local machine prior to uploading.
 
 ```powershell
 ./publish.ps1 -WhatIf
 ```
 
-On GitHub, three workflows do the same:
+GitHub runs three workflows:
 
-| Workflow  | Runs                                     | What it does                                                        |
-| --------- | ---------------------------------------- | ------------------------------------------------------------------- |
-| `Check`   | For a pull request                       | Installs a Ghost site on the runner and creates the posts on it     |
-| `Lint`    | For a pull request                       | Looks for links that lead nowhere                                   |
-| `Publish` | For a change to `main`, daily or by hand | Brings the theme, tags, pages and posts of the live site up to date |
+| Workflow  | Runs                                     | What it does                                                                            |
+|-----------|------------------------------------------|-----------------------------------------------------------------------------------------|
+| `Check`   | For a pull request                       | Installs a Ghost site on the runner and creates the posts on it                         |
+| `Lint`    | For a pull request                       | Looks for links that lead nowhere                                                       |
+| `Publish` | For a change to `main`, daily or by hand | Reports what would change, or applies changes on a manual run with the dry run disabled |
 
-`Publish` is a dry run too, until I start it by hand and say otherwise.
+I look at `Publish` summary to review what is about to be uploaded. Neither a change to `main` or a scheduled run results in any changes being published.
 
-## A house style for the images
+## Create covers that match the theme
 
-I normally use image generators for the pictures of my posts, and I wanted them to be consistent. Every picture should follow the style of the site, with the title of the post on the cover in that same style.
-
-The style isn't written down anywhere. `cover.ps1` reads the colours and the font from the theme, every time a picture is made:
+I generate the illustrations for my posts. To achieve cover designs in keeping with the site's appearance I used `cover.ps1` to read the theme's colors and font and use them as prompts to generate more covers for my posts. I prefer to not have the generator attempt to write the title of my posts.
 
 ```powershell
 # The prompt for the image generator, with the style of the site around it
@@ -159,21 +159,21 @@ The style isn't written down anywhere. `cover.ps1` reads the colours and the fon
 ./cover.ps1 posts/<folder> -Image ~/Downloads/picture.png -Open
 ```
 
-The generator is asked for a picture without any text, because it can't spell. The title is set afterwards, in the font of the site. A cover is 1600 by 900, and it's made again when the title of the post or the theme changes.
+Once the generator produces the illustration, my cover script adds the title using the site's font.
 
-The covers of the older posts got the house style too, with `./cover.ps1 -Adopt`.
+The covers can easily be edited to reflect changes to the post's title. I used `./cover.ps1 -Adopt` to bring earlier post covers into the same style as more recent covers.
 
-## An open repository
+## Contribute to the blog
 
-The [public repo][03] is for people to contribute if they want to. Open an issue, or change the Markdown file and send a pull request. `Check` needs no secrets, so it also runs for a pull request from a fork.
+I've implemented GitHub Actions to automatically build and publish any changes made to the `main` branch. If you find errors in any of the posts, please edit the file and create a pull request. The `Check` workflow is automatically run on pull requests to verify the changes don't contain secrets.
 
-The challenge there is expanding on membership tiers. You don't want your members to be open-source or let people know who has subscribed to what.
+Posts are publicly available. Personal member information and tier level are not. I'll need to implement additional measures to protect member data to expand the membership service.
 
-## What is left
+## Next steps
 
-The challenges that are left are expanding the SDK and, for a future post (spoiler), working through the GitHub Actions.
+In the meantime, the [PowerShell module][02] may be used to sync a post to Ghost from Git as well.
 
-And that's about it. If you run Ghost yourself, give the module a try, and if you spot something in a post that isn't right, you now know where the Markdown file is.
+I'll also explain how to use GitHub Actions in a separate post.
 
 [01]: https://docs.ghost.org/admin-api
 [02]: https://www.powershellgallery.com/packages/Ghost
